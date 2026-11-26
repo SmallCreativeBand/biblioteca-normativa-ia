@@ -21,8 +21,14 @@ Regenera biblioteca.html con los datos actuales de la biblioteca.
 5. No cambies el diseño ni la plantilla salvo que te lo pida, y no añadas nada externo
    (fuentes, scripts, CDN): la página tiene que seguir funcionando con doble clic y sin conexión.
 
+6. La biblioteca está publicada en GitHub (SmallCreativeBand/biblioteca-normativa-ia) y la web
+   sale de la rama main con GitHub Pages. Cuando todo esté bien, enséñame los cambios y,
+   con mi visto bueno, haz commit y push para que la web se actualice.
+
 Al terminar, dime en tres líneas qué ha cambiado (documentos, informes, avisos).
 ```
+
+La web pública es https://smallcreativeband.github.io/biblioteca-normativa-ia/ (abre biblioteca.html). No quites los archivos `index.html` y `.nojekyll` de la raíz: el primero lleva a la página y el segundo evita que GitHub transforme las fichas .md y rompa los enlaces.
 
 ## Si el agente no puede ejecutar Python
 
