@@ -7,3 +7,6 @@ papelera/
 
 # Descargas sin clasificar: se suben cuando pasan a normas/, guias/ o casos/
 descargas/
+
+# Caché de Python
+__pycache__/

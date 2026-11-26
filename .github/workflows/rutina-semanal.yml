@@ -1,0 +1,115 @@
+# Rutina semanal de novedades de la biblioteca de IA (versión automática de prompt_rutina_semanal.md).
+# Cada lunes a las 9:00, hora de Madrid, revisa las fuentes oficiales, guarda novedades/AAAA-MM-DD.md,
+# regenera biblioteca.html y, si hay algo que decidir, abre un issue.
+# No descarga documentos, no mueve archivos y no toca biblioteca.xlsx: solo propone.
+name: Rutina semanal de novedades
+
+on:
+  schedule:
+    # GitHub programa en hora UTC. Estas dos líneas cubren las 9:00 de Madrid en verano (UTC+2)
+    # y en invierno (UTC+1); el primer paso descarta la que no toca.
+    - cron: '0 7 * * 1'
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+    inputs:
+      fecha:
+        description: 'Fecha del informe (AAAA-MM-DD). Déjalo vacío para usar la de hoy.'
+        required: false
+        default: ''
+
+permissions:
+  contents: write   # guardar el informe y la página
+  issues: write     # abrir el aviso semanal
+  pages: write      # pedir que se actualice la web
+
+concurrency:
+  group: rutina-semanal
+  cancel-in-progress: false
+
+jobs:
+  novedades:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: Europe/Madrid
+    steps:
+      - name: Comprobar que son las 9:00 en Madrid
+        id: hora
+        env:
+          PROGRAMACION: ${{ github.event.schedule }}
+        run: |
+          desfase="$(date +%z)"
+          seguir=si
+          if [ "$PROGRAMACION" = "0 7 * * 1" ] && [ "$desfase" != "+0200" ]; then seguir=no; fi
+          if [ "$PROGRAMACION" = "0 8 * * 1" ] && [ "$desfase" != "+0100" ]; then seguir=no; fi
+          echo "seguir=$seguir" >> "$GITHUB_OUTPUT"
+          echo "Programación: ${PROGRAMACION:-manual} · Madrid UTC$desfase · seguir: $seguir"
+
+      - name: Descargar el repositorio
+        if: steps.hora.outputs.seguir == 'si'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Revisar las fuentes y escribir el informe
+        id: rutina
+        if: steps.hora.outputs.seguir == 'si'
+        env:
+          FECHA: ${{ inputs.fecha }}
+        run: |
+          if [ -n "$FECHA" ]; then
+            python3 -I herramientas/rutina_semanal.py --fecha "$FECHA"
+          else
+            python3 -I herramientas/rutina_semanal.py
+          fi
+
+      - name: Regenerar biblioteca.html
+        if: steps.hora.outputs.seguir == 'si'
+        run: python3 -I herramientas/generar_biblioteca_html.py || echo "::warning::El generador de la página ha dado avisos; revisa este paso."
+
+      - name: Guardar el informe en el repositorio
+        id: guardar
+        if: steps.hora.outputs.seguir == 'si'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add novedades biblioteca.html
+          if git diff --cached --quiet; then
+            echo "No hay cambios que guardar."
+            echo "subido=no" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Informe semanal de novedades ($(date +%F))"
+          git pull --rebase --autostash
+          git push
+          echo "subido=si" >> "$GITHUB_OUTPUT"
+
+      - name: Actualizar la web (GitHub Pages)
+        if: steps.guardar.outputs.subido == 'si'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" --silent
+
+      - name: Abrir un aviso si hay algo que decidir
+        if: steps.rutina.outputs.avisar == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INFORME: ${{ steps.rutina.outputs.informe }}
+          TITULO: ${{ steps.rutina.outputs.titulo }}
+        run: |
+          zw="$(printf '\xe2\x80\x8b')"   # evita que una «@» de una fuente mencione a alguien en GitHub
+          {
+            echo "La rutina semanal ha dejado el informe en [\`$INFORME\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/main/${INFORME})."
+            echo
+            echo "Para añadir algo a la biblioteca, pídeselo al agente: «Añade a la biblioteca las novedades 1 y 3 del informe de hoy». Cierra este aviso cuando lo hayas decidido."
+            echo
+            echo "---"
+            echo
+            sed "s/@/@${zw}/g" "$INFORME" | head -c 60000
+          } > "$RUNNER_TEMP/aviso.md"
+          gh issue create --title "$TITULO" --body-file "$RUNNER_TEMP/aviso.md"
+
+      - name: Resumen de la ejecución
+        if: always() && steps.rutina.outputs.informe != ''
+        env:
+          INFORME: ${{ steps.rutina.outputs.informe }}
+        run: cat "$INFORME" >> "$GITHUB_STEP_SUMMARY"
