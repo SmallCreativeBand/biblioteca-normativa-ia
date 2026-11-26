@@ -1,0 +1,3553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-+ybXDuxqreCwAbcitprTrVYuu5Q0Maf+H3UKQdeUQfQ='; style-src 'sha256-asjMpfbM70IxLPdXlwklObPwytybBgRo6hRh48dMNp0='; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Biblioteca de normativa de IA</title>
+<style>
+/* Mesa de consulta: boletín de novedades arriba, cajón de búsqueda a la izquierda,
+   fichas de archivo a la derecha y cronología abajo. Tema claro fijo, pensado para proyector. */
+:root {
+  color-scheme: light;
+  --papel: #eef1f0;
+  --hoja: #ffffff;
+  --tinta: #14202b;
+  --tinta-2: #45525e;
+  --regla: #ccd4d3;
+  --regla-suave: #e3e8e7;
+  --banda: #14202b;
+  --acento: #0e5a6e;
+  --acento-2: #0a4555;
+  --boletin: #e2eae9;
+  --foco: #e3a008;
+  --norma: #3346a8;
+  --guia: #0d7a65;
+  --caso: #a1336b;
+  --e-vigente: #1d7a3b;      --e-vigente-f: #e1f3e6;
+  --e-diferida: #1b6592;     --e-diferida-f: #e0eef7;
+  --e-tramitacion: #8c5300;  --e-tramitacion-f: #fcefd6;
+  --e-decaido: #555a61;      --e-decaido-f: #eaebed;
+  --e-orientativo: #3d5570;  --e-orientativo-f: #e6ecf2;
+  --e-firme: #0c5a39;        --e-firme-f: #d7eee2;
+  --e-recurrido: #b42318;    --e-recurrido-f: #fde4e1;
+  --e-pendiente: #7a5800;    --e-pendiente-f: #fff1bd;
+  --hoy: #b42318;
+  --f-titulo: Charter, "Bitstream Charter", "Sitka Text", Cambria, "Iowan Old Style", Georgia, serif;
+  --f-texto: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --f-dato: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --nav-alto: 3.1rem;
+}
+* { box-sizing: border-box; }
+html { font-size: 18px; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-alto) + .75rem); }
+body { margin: 0; background: var(--papel); color: var(--tinta); font-family: var(--f-texto); line-height: 1.5; }
+a { color: var(--acento); }
+a:hover { color: var(--acento-2); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; border-radius: 4px; }
+[hidden] { display: none !important; }
+.envoltura { max-width: 1380px; margin-inline: auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.saltar { position: absolute; left: -9999px; top: 0; }
+.saltar:focus { left: 1rem; top: 1rem; background: var(--hoja); color: var(--tinta); padding: .5rem 1rem; z-index: 20; }
+.dato { font-family: var(--f-dato); font-variant-numeric: tabular-nums; }
+.etq { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-2); }
+h1, h2, h3 { text-wrap: balance; }
+
+/* ---------- Portada */
+.portada { background: var(--hoja); border-bottom: 1px solid var(--regla); }
+.portada .envoltura { padding-block: 1.6rem 1.35rem; display: grid; gap: 1.2rem; }
+.portada-fila { display: flex; flex-wrap: wrap; gap: 1.2rem 2.5rem; align-items: flex-start; justify-content: space-between; }
+.portada-texto { min-width: 0; flex: 1 1 32rem; }
+.antetitulo { margin: 0 0 .35rem; color: var(--acento); }
+h1 { font-family: var(--f-titulo); font-size: clamp(2rem, 3.4vw, 2.85rem); line-height: 1.08; margin: 0; letter-spacing: -.012em; }
+.frase { margin: .7rem 0 0; font-size: 1.12rem; color: var(--tinta-2); max-width: 64ch; }
+.frase strong { color: var(--tinta); }
+.sello { flex: 0 0 auto; display: grid; gap: .1rem; justify-items: end; text-align: right; border: 2px solid var(--tinta); border-radius: 8px; padding: .55rem .9rem .6rem; }
+.sello strong { font-family: var(--f-dato); font-size: 1.45rem; line-height: 1.15; }
+.sello .detalle { font-size: .8rem; color: var(--tinta-2); }
+.composicion { display: grid; gap: .45rem; }
+.barra { display: flex; gap: 3px; height: 16px; border-radius: 4px; overflow: hidden; background: var(--regla-suave); }
+.seg { min-width: 6px; }
+.leyenda { display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; margin: 0; padding: 0; list-style: none; font-size: .92rem; }
+.leyenda li { display: inline-flex; align-items: center; gap: .45rem; }
+.leyenda .dato { font-weight: 700; }
+
+/* Colores de estado y tipo (marcas, segmentos, puntos) */
+.c-vigente { background: var(--e-vigente); } .c-diferida { background: var(--e-diferida); }
+.c-tramitacion { background: var(--e-tramitacion); } .c-decaido { background: var(--e-decaido); }
+.c-orientativo { background: var(--e-orientativo); } .c-firme { background: var(--e-firme); }
+.c-recurrido { background: var(--e-recurrido); } .c-pendiente { background: var(--e-pendiente); }
+.c-otro { background: var(--tinta-2); }
+.c-norma { background: var(--norma); } .c-guia { background: var(--guia); } .c-caso { background: var(--caso); }
+.marca { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; flex: 0 0 auto; }
+
+/* ---------- Barra de navegación */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 8; background: var(--banda); color: #fff; }
+.nav .envoltura { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem 1.6rem; min-height: var(--nav-alto); }
+.nav a { color: #fff; font-weight: 650; text-decoration: none; padding-block: .55rem; border-bottom: 2px solid transparent; }
+.nav a:hover { border-bottom-color: #fff; color: #fff; }
+.nav .marca-nav { font-family: var(--f-titulo); font-weight: 700; font-size: 1.05rem; margin-right: .4rem; }
+.tamano { margin-left: auto; display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; color: #c9d3da; }
+.tamano button { background: transparent; color: #fff; border: 1px solid #6f7f8c; border-radius: 6px; padding: .12rem .55rem; font-weight: 700; cursor: pointer; }
+.tamano button:hover { border-color: #fff; }
+
+/* ---------- Boletín de novedades */
+.boletin { background: var(--boletin); border-bottom: 1px solid var(--regla); }
+.boletin .envoltura { padding-block: 1.5rem 1.6rem; }
+.boletin-cab { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem 1rem; margin-bottom: 1rem; }
+h2 { font-family: var(--f-titulo); font-size: 1.75rem; line-height: 1.15; margin: 0; }
+.periodo { font-size: .9rem; color: var(--tinta-2); }
+.columnas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; }
+.columna { min-width: 0; padding-right: 1.6rem; }
+.columna + .columna { padding-left: 1.6rem; padding-right: 0; border-left: 1px solid var(--regla); }
+.columna > .etq { display: block; margin-bottom: .55rem; }
+.alta { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .1rem .9rem; align-items: baseline; padding: .55rem 0; border-top: 1px solid var(--regla); }
+.alta:first-of-type { border-top: 0; padding-top: .1rem; }
+.alta .dato { font-size: .88rem; font-weight: 700; }
+.alta-titulo { font-weight: 650; }
+.alta-sub { grid-column: 2; font-size: .88rem; color: var(--tinta-2); }
+.lista-plegada { margin: .35rem 0 0; padding: 0; list-style: none; columns: 2 16rem; column-gap: 1.5rem; }
+.lista-plegada li { break-inside: avoid; padding: .15rem 0; font-size: .92rem; }
+details > summary { cursor: pointer; color: var(--acento); font-weight: 650; }
+.veredicto { display: flex; align-items: center; gap: .6rem; font-size: 1.15rem; font-weight: 700; margin: .1rem 0 .7rem; }
+.veredicto svg { flex: 0 0 auto; }
+.revision { margin: 0; padding: 0; list-style: none; }
+.revision li { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: .8rem; padding: .45rem 0; border-top: 1px solid var(--regla); font-size: .93rem; }
+.revision .resultado { color: var(--tinta-2); }
+.cambio-fila { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.flecha { color: var(--tinta-2); font-weight: 700; }
+.nota { font-size: .85rem; color: var(--tinta-2); margin: .6rem 0 0; }
+
+/* ---------- Consulta: cajón + resultados */
+.consulta { display: grid; grid-template-columns: 19rem minmax(0, 1fr); gap: 2rem; padding-block: 1.8rem 1rem; align-items: start; }
+.cajon { position: sticky; top: calc(var(--nav-alto) + 1rem); max-height: calc(100vh - var(--nav-alto) - 2rem); overflow: auto; padding: 0 .3rem .5rem 0; display: grid; gap: 1.15rem; }
+.buscar { display: grid; gap: .35rem; }
+.buscar input { font: inherit; font-size: 1.05rem; width: 100%; padding: .65rem .8rem; border: 2px solid var(--tinta); border-radius: 8px; background: var(--hoja); color: var(--tinta); }
+.buscar input::placeholder { color: #7b8691; }
+.atajo { font-size: .78rem; color: var(--tinta-2); }
+.atajo kbd { font-family: var(--f-dato); border: 1px solid var(--regla); border-bottom-width: 2px; border-radius: 4px; padding: 0 .3rem; background: var(--hoja); }
+.faceta { border: 0; margin: 0; padding: 0; min-width: 0; }
+.faceta legend { padding: 0; margin-bottom: .45rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid var(--regla); background: var(--hoja); color: var(--tinta); border-radius: 999px; padding: .28rem .7rem; font-size: .9rem; cursor: pointer; line-height: 1.25; text-align: left; }
+.chip:hover { border-color: var(--tinta-2); }
+.chip .n { font-family: var(--f-dato); font-size: .8rem; color: var(--tinta-2); }
+.chip[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+.chip[aria-pressed="true"] .n { color: #d5dde3; }
+.chip.vacia { opacity: .45; }
+.resultados { min-width: 0; }
+.resultados-cab { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .8rem 1.5rem; margin-bottom: .8rem; }
+.recuento { margin: 0; }
+.recuento .grande { font-family: var(--f-titulo); font-size: 1.75rem; font-weight: 700; }
+.recuento .de { color: var(--tinta-2); }
+.herramientas { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.herramientas label { display: inline-flex; align-items: center; gap: .45rem; font-size: .9rem; color: var(--tinta-2); }
+select { font: inherit; font-size: .95rem; padding: .4rem .55rem; border: 1px solid var(--regla); border-radius: 6px; background: var(--hoja); color: var(--tinta); }
+.boton { border: 1px solid var(--acento); background: var(--acento); color: #fff; border-radius: 6px; padding: .42rem .9rem; font-weight: 650; cursor: pointer; }
+.boton:hover { background: var(--acento-2); border-color: var(--acento-2); }
+.boton.claro { background: var(--hoja); color: var(--acento); }
+.boton.claro:hover { background: var(--boletin); }
+.activos { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: 0 0 1rem; }
+.activo { display: inline-flex; align-items: center; gap: .4rem; background: var(--hoja); border: 1px solid var(--tinta); border-radius: 6px; padding: .15rem .3rem .15rem .6rem; font-size: .88rem; cursor: pointer; }
+.activo span[aria-hidden] { font-weight: 800; padding: 0 .25rem; }
+.quitar { background: none; border: 0; color: var(--acento); text-decoration: underline; cursor: pointer; font-size: .88rem; padding: .15rem .2rem; }
+
+/* ---------- Fichas de archivo */
+.fichero { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr)); gap: 1rem; }
+.tarjeta { background: var(--hoja); border: 1px solid var(--regla); border-radius: 10px; padding: 1rem 1.15rem .95rem; display: flex; flex-direction: column; gap: .5rem; min-width: 0; transition: border-color .15s ease, box-shadow .15s ease; }
+.tarjeta:hover { border-color: var(--tinta-2); box-shadow: 0 6px 18px rgba(20, 32, 43, .08); }
+.t-cab { display: flex; justify-content: space-between; align-items: center; gap: .6rem; font-size: .8rem; }
+.tipo { display: inline-flex; align-items: center; gap: .4rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.tipo-norma { color: var(--norma); } .tipo-guia { color: var(--guia); } .tipo-caso { color: var(--caso); }
+.ref { color: var(--tinta-2); text-align: right; }
+.t-titulo { font-family: var(--f-titulo); font-size: 1.24rem; line-height: 1.24; margin: 0; }
+.t-org { margin: 0; color: var(--tinta-2); font-size: .92rem; }
+.t-datos { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .6rem; }
+.fecha { font-family: var(--f-dato); font-variant-numeric: tabular-nums; font-weight: 700; font-size: .9rem; }
+.fecha.sin { color: var(--e-pendiente); }
+.estado { display: inline-block; font-size: .82rem; font-weight: 750; border-radius: 999px; padding: .1rem .65rem; white-space: nowrap; }
+.e-vigente { background: var(--e-vigente-f); color: var(--e-vigente); }
+.e-diferida { background: var(--e-diferida-f); color: var(--e-diferida); }
+.e-tramitacion { background: var(--e-tramitacion-f); color: var(--e-tramitacion); }
+.e-decaido { background: var(--e-decaido-f); color: var(--e-decaido); }
+.e-orientativo { background: var(--e-orientativo-f); color: var(--e-orientativo); }
+.e-firme { background: var(--e-firme-f); color: var(--e-firme); }
+.e-recurrido { background: var(--e-recurrido-f); color: var(--e-recurrido); }
+.e-pendiente { background: var(--e-pendiente-f); color: var(--e-pendiente); box-shadow: inset 0 0 0 1px var(--e-pendiente); }
+.e-otro { background: var(--regla-suave); color: var(--tinta-2); }
+.obliga { font-size: .82rem; font-weight: 700; color: var(--tinta); }
+.obliga.o-no { color: var(--tinta-2); font-weight: 600; }
+.t-resumen { margin: 0; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.t-pie { margin-top: auto; padding-top: .65rem; border-top: 1px solid var(--regla-suave); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; }
+.ver-ficha { background: var(--tinta); color: #fff; border: 0; border-radius: 6px; padding: .38rem .85rem; font-weight: 650; cursor: pointer; }
+.ver-ficha:hover { background: #2a3a48; }
+.fuente { font-weight: 650; text-decoration: none; }
+.fuente:hover { text-decoration: underline; }
+.vacio { background: var(--hoja); border: 1px dashed var(--regla); border-radius: 10px; padding: 2rem; text-align: center; color: var(--tinta-2); }
+
+/* Enlaces que abren fichas */
+.enlace-doc, .enlace-id { background: none; border: 0; padding: 0; color: var(--acento); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; text-align: left; }
+.enlace-doc:hover, .enlace-id:hover { color: var(--acento-2); }
+
+/* ---------- Cronología */
+.cronologia-sec { padding-block: 1.6rem 2.5rem; }
+.cronologia-cab { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .3rem 1rem; margin-bottom: .8rem; }
+.mapa { background: var(--hoja); border: 1px solid var(--regla); border-radius: 10px; padding: .6rem .8rem .3rem; margin-bottom: .6rem; }
+.mapa svg { display: block; width: 100%; height: auto; }
+.m-eje { stroke: var(--tinta-2); stroke-width: 1.5; }
+.m-tick { stroke: var(--regla); stroke-width: 1; }
+.m-anio { fill: var(--tinta-2); font-family: var(--f-dato); font-size: 14px; cursor: pointer; }
+.m-anio:hover { fill: var(--acento); text-decoration: underline; }
+.m-norma { fill: var(--norma); } .m-guia { fill: var(--guia); } .m-caso { fill: var(--caso); }
+.m-hoy { stroke: var(--hoy); stroke-width: 2; stroke-dasharray: 4 3; }
+.m-hoy-txt { fill: var(--hoy); font-family: var(--f-dato); font-size: 13px; font-weight: 700; }
+.leyenda-tipos { display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; margin: 0 0 1.2rem; padding: 0; list-style: none; font-size: .9rem; color: var(--tinta-2); }
+.leyenda-tipos li { display: inline-flex; align-items: center; gap: .4rem; }
+.leyenda-tipos .punto { width: .65rem; height: .65rem; border-radius: 50%; display: inline-block; }
+.cronologia { list-style: none; margin: 0; padding: 0; }
+.anio-grupo { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1.4rem; border-top: 2px solid var(--tinta); padding-top: .7rem; margin-top: 1.3rem; }
+.anio-grupo:first-child { margin-top: 0; }
+.anio { font-family: var(--f-titulo); font-size: 2.1rem; line-height: 1; margin: 0; position: sticky; top: calc(var(--nav-alto) + .8rem); align-self: start; }
+.hitos { list-style: none; margin: 0; padding: 0; min-width: 0; }
+.hito { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: .15rem 1.1rem; padding: .55rem .5rem; border-bottom: 1px solid var(--regla); border-radius: 4px; }
+.hito:last-child { border-bottom: 0; }
+.hito-fecha { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--f-dato); font-variant-numeric: tabular-nums; font-weight: 700; font-size: .92rem; }
+.hito-fecha::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--tinta-2); flex: 0 0 auto; }
+.h-norma .hito-fecha::before { background: var(--norma); }
+.h-guia .hito-fecha::before { background: var(--guia); }
+.h-caso .hito-fecha::before { background: var(--caso); }
+.hito p { margin: 0; }
+.hito .enlace-doc { font-size: .86rem; }
+.hito.futuro { background: #fff6d6; }
+.proximo { font-family: var(--f-texto); font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--e-pendiente); margin-left: .25rem; }
+.hoy-fila { display: flex; align-items: center; gap: .6rem; padding: .5rem .5rem; color: var(--hoy); font-family: var(--f-dato); font-weight: 800; font-size: .92rem; }
+.hoy-fila::after { content: ""; flex: 1; border-top: 2px dashed var(--hoy); }
+
+/* ---------- Visor de ficha */
+dialog.visor { width: min(1120px, 95vw); max-height: 92vh; padding: 0; border: 0; border-radius: 12px; background: var(--hoja); color: var(--tinta); box-shadow: 0 24px 60px rgba(10, 18, 26, .38); }
+dialog.visor::backdrop { background: rgba(12, 20, 28, .6); }
+.visor-cab { position: sticky; top: 0; z-index: 2; background: var(--hoja); border-bottom: 1px solid var(--regla); padding: 1rem 1.4rem .9rem; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .3rem 1rem; align-items: start; }
+.visor-cab .t-cab { grid-column: 1; justify-content: flex-start; gap: 1rem; }
+.visor-cab h2 { grid-column: 1; font-size: 1.65rem; }
+.visor-cab .oficial { grid-column: 1; margin: 0; color: var(--tinta-2); font-style: italic; font-size: .95rem; }
+.visor-cab .t-datos { grid-column: 1; margin-top: .25rem; }
+.cerrar { grid-column: 2; grid-row: 1 / span 2; background: var(--hoja); border: 1px solid var(--tinta); border-radius: 6px; padding: .35rem .8rem; font-weight: 650; cursor: pointer; }
+.cerrar:hover { background: var(--papel); }
+.visor-cuerpo { display: grid; grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: 1.8rem; padding: 1.2rem 1.4rem 1.4rem; }
+.visor-meta { background: var(--papel); border-radius: 8px; padding: .9rem 1rem; align-self: start; }
+.visor-meta dl { margin: 0; display: grid; gap: .65rem; }
+.visor-meta dt { font-size: .74rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--tinta-2); }
+.visor-meta dd { margin: .1rem 0 0; font-size: .92rem; overflow-wrap: anywhere; }
+.visor-texto { min-width: 0; }
+.visor-texto h3 { font-family: var(--f-titulo); font-size: 1.2rem; margin: 1.25rem 0 .35rem; }
+.visor-texto h3:first-child { margin-top: 0; }
+.visor-texto p { margin: .3rem 0; max-width: 70ch; }
+.visor-texto ul { margin: .3rem 0; padding-left: 1.15rem; max-width: 72ch; }
+.visor-texto li { margin: .25rem 0; }
+.visor-pie { border-top: 1px solid var(--regla); padding: .8rem 1.4rem 1rem; display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; }
+.visor-pie a { font-weight: 650; }
+
+.pie { color: var(--tinta-2); font-size: .85rem; padding-block: 0 2rem; }
+.pie p { max-width: 90ch; margin: .3rem 0; }
+
+@media (max-width: 1000px) {
+  .consulta { grid-template-columns: minmax(0, 1fr); }
+  .cajon { position: static; max-height: none; overflow: visible; padding: 0; }
+}
+@media (max-width: 760px) {
+  html { font-size: 16px; }
+  .columnas { grid-template-columns: minmax(0, 1fr); }
+  .columna, .columna + .columna { padding: 0; border-left: 0; }
+  .columna + .columna { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--regla); }
+  .sello { justify-items: start; text-align: left; }
+  .visor-cuerpo { grid-template-columns: minmax(0, 1fr); }
+  .anio-grupo { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+  .anio { position: static; font-size: 1.6rem; }
+  .hito { grid-template-columns: minmax(0, 1fr); }
+  .mapa { display: none; }
+  .tamano { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .tarjeta { transition: none; }
+}
+@media print {
+  .nav, .cajon, .t-pie, .herramientas { display: none; }
+  body { background: #fff; }
+  .consulta { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<a class="saltar" href="#documentos">Saltar a los documentos</a>
+
+<header class="portada">
+  <div class="envoltura">
+    <div class="portada-fila">
+      <div class="portada-texto">
+        <p class="antetitulo etq">Normas, guías y casos sobre el uso de la IA</p>
+        <h1>Biblioteca de normativa de IA</h1>
+        <p class="frase" id="frase"></p>
+      </div>
+      <div class="sello" aria-label="Fecha de la última actualización">
+        <span class="etq">Última actualización</span>
+        <strong id="fecha-actualizacion">—</strong>
+        <span class="detalle" id="detalle-actualizacion"></span>
+      </div>
+    </div>
+    <div class="composicion">
+      <span class="etq">Estado de los documentos</span>
+      <div class="barra" id="barra-estado" role="img"></div>
+      <ul class="leyenda" id="leyenda-estado"></ul>
+    </div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="envoltura">
+    <span class="marca-nav">Biblioteca de IA</span>
+    <a href="#novedades">Novedades</a>
+    <a href="#documentos">Documentos</a>
+    <a href="#linea-tiempo">Línea de tiempo</a>
+    <span class="tamano">Texto
+      <button type="button" id="texto-menos" aria-label="Reducir el tamaño del texto">A−</button>
+      <button type="button" id="texto-mas" aria-label="Aumentar el tamaño del texto">A+</button>
+    </span>
+  </div>
+</nav>
+
+<main>
+  <section class="boletin" id="novedades" aria-labelledby="t-novedades">
+    <div class="envoltura">
+      <div class="boletin-cab">
+        <h2 id="t-novedades">Novedades</h2>
+        <span class="periodo dato" id="novedades-periodo"></span>
+      </div>
+      <div class="columnas">
+        <div class="columna">
+          <span class="etq">Añadido en las últimas cuatro semanas</span>
+          <div id="nov-altas"></div>
+        </div>
+        <div class="columna">
+          <span class="etq">Cambios de estado</span>
+          <div id="nov-estados"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="envoltura consulta" id="documentos" aria-labelledby="t-documentos">
+    <aside class="cajon" aria-label="Buscar y filtrar">
+      <div class="buscar">
+        <label class="etq" for="q">Buscar</label>
+        <input id="q" type="search" placeholder="Título, organismo, resumen o tema" autocomplete="off">
+        <span class="atajo">Pulsa <kbd>/</kbd> para buscar desde cualquier sitio</span>
+      </div>
+      <div id="facetas"></div>
+    </aside>
+    <div class="resultados">
+      <div class="resultados-cab">
+        <h2 class="recuento" id="t-documentos" aria-live="polite"><span class="grande" id="n-visibles">0</span> <span class="de" id="n-total"></span></h2>
+        <div class="herramientas">
+          <label for="orden">Ordenar
+            <select id="orden">
+              <option value="fecha-desc">Más recientes</option>
+              <option value="fecha-asc">Más antiguos</option>
+              <option value="titulo">Título (A-Z)</option>
+              <option value="id">ID</option>
+            </select>
+          </label>
+          <button type="button" class="boton" id="exportar">Exportar CSV</button>
+        </div>
+      </div>
+      <div class="activos" id="activos" hidden></div>
+      <div class="fichero" id="tarjetas"></div>
+      <p class="vacio" id="vacio" hidden>Ningún documento cumple la búsqueda y los filtros. Quita algún filtro o cambia las palabras.</p>
+    </div>
+  </section>
+
+  <section class="envoltura cronologia-sec" id="linea-tiempo" aria-labelledby="t-linea">
+    <div class="cronologia-cab">
+      <h2 id="t-linea">Línea de tiempo</h2>
+      <span class="periodo" id="linea-nota"></span>
+    </div>
+    <div class="mapa" id="mapa"></div>
+    <ul class="leyenda-tipos">
+      <li><span class="punto c-norma"></span>Norma</li>
+      <li><span class="punto c-guia"></span>Guía</li>
+      <li><span class="punto c-caso"></span>Caso</li>
+    </ul>
+    <ol class="cronologia" id="linea"></ol>
+  </section>
+</main>
+
+<footer class="envoltura pie">
+  <p>Generada a partir de biblioteca.xlsx, la carpeta /fichas y los informes semanales de /novedades. Las guías y los códigos orientan, no obligan: fíjate en si cada documento obliga o no. Cada estado se comprobó en la fecha de consulta de su ficha, y la normativa cambia.</p>
+  <p id="pie-generado"></p>
+</footer>
+
+<dialog class="visor" id="ficha" aria-labelledby="ficha-titulo">
+  <div class="visor-cab">
+    <div class="t-cab" id="ficha-cab"></div>
+    <h2 id="ficha-titulo"></h2>
+    <p class="oficial" id="ficha-oficial"></p>
+    <div class="t-datos" id="ficha-datos"></div>
+    <button type="button" class="cerrar" id="cerrar-ficha">Cerrar</button>
+  </div>
+  <div class="visor-cuerpo">
+    <aside class="visor-meta"><dl id="ficha-meta"></dl></aside>
+    <div class="visor-texto" id="ficha-texto"></div>
+  </div>
+  <div class="visor-pie" id="ficha-pie"></div>
+</dialog>
+
+<script type="application/json" id="datos-biblioteca">{
+ "actualizado": "2026-11-26",
+ "generado": "2026-11-26 19:52",
+ "documentos": [
+  {
+   "id": "N04",
+   "tipo": "norma",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "Gobierno de España (Consejo de Ministros; Ministerio para la Transformación Digital y de la Función Pública)",
+   "titulo": "Proyecto de Ley Orgánica para el buen uso y la gobernanza de la inteligencia artificial (referencia del Consejo de Ministros)",
+   "corto": "Proyecto de Ley Orgánica de buen uso y gobernanza de la IA",
+   "fecha": "2026-05-26",
+   "estado": "PENDIENTE",
+   "vinculante": "no",
+   "temas": [
+    "gobernanza y supervisión",
+    "sector público",
+    "prácticas prohibidas",
+    "alto riesgo"
+   ],
+   "resumen": "Referencia del Consejo de Ministros que aprueba el proyecto de ley orgánica que adapta el RIA al marco español y lo remite a las Cortes. Prevé clasificación por riesgo, régimen sancionador, supervisión humana obligatoria, la AESIA como autoridad central con otras autoridades sectoriales (Banco de España, AEPD, CGPJ) y la figura del delegado de IA en el sector público estatal.",
+   "archivo": "normas/2026-05-26_gobierno-espana_proyecto-ley-gobernanza-ia.md",
+   "ficha_archivo": "fichas/2026-05-26_gobierno-espana_proyecto-ley-gobernanza-ia.md",
+   "url": "https://www.lamoncloa.gob.es/consejodeministros/resumenes/Paginas/2026/260526-rueda-prensa-ministros.aspx",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: la referencia está fechada «26.5.2026». Estado: la referencia de 2026-05-26 dice que el proyecto «se remite a las Cortes para el inicio de su tramitación»; lo descargado no dice nada posterior. Vinculante: es un proyecto de ley, no una ley aprobada.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2026-05-07",
+     "texto": "según la referencia, la UE acuerda dos nuevas prohibiciones (deepfakes sexuales y pornografía infantil generadas con IA)."
+    },
+    {
+     "fecha": "2026-05-26",
+     "texto": "el Consejo de Ministros aprueba el proyecto y lo remite a las Cortes."
+    }
+   ],
+   "ficha": {
+    "titulo": "Proyecto de Ley Orgánica de buen uso y gobernanza de la IA",
+    "campos": [
+     [
+      "ID",
+      "N04"
+     ],
+     [
+      "Tipo",
+      "norma"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "Gobierno de España (Consejo de Ministros; Ministerio para la Transformación Digital y de la Función Pública)"
+     ],
+     [
+      "Fecha",
+      "2026-05-26 (fuente: la referencia está fechada «26.5.2026»)"
+     ],
+     [
+      "Estado",
+      "PENDIENTE (fuente: la referencia de 2026-05-26 dice que el proyecto «se remite a las Cortes para el inicio de su tramitación»; lo descargado no dice nada posterior; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no (es un proyecto de ley, no una ley aprobada)"
+     ],
+     [
+      "Temas",
+      "gobernanza y supervisión; sector público; prácticas prohibidas; alto riesgo"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "normas/2026-05-26_gobierno-espana_proyecto-ley-gobernanza-ia.md"
+     ],
+     [
+      "URL oficial",
+      "https://www.lamoncloa.gob.es/consejodeministros/resumenes/Paginas/2026/260526-rueda-prensa-ministros.aspx"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Referencia del Consejo de Ministros que aprueba el proyecto de ley orgánica que adapta el RIA al marco español y lo remite a las Cortes. Prevé clasificación por riesgo, régimen sancionador, supervisión humana obligatoria, la AESIA como autoridad central con otras autoridades sectoriales (Banco de España, AEPD, CGPJ) y la figura del delegado de IA en el sector público estatal."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Es la futura ley española de IA: marca qué autoridad supervisará cada sector y qué se exigirá a la Administración. Hasta que se apruebe, no obliga."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2026-05-07: según la referencia, la UE acuerda dos nuevas prohibiciones (deepfakes sexuales y pornografía infantil generadas con IA).",
+       "2026-05-26: el Consejo de Ministros aprueba el proyecto y lo remite a las Cortes."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "N01: el proyecto desarrolla el RIA en España (N01 no se pudo descargar).",
+       "N02: las nuevas prohibiciones citadas encajan con el Ómnibus que modifica el RIA (no descargado).",
+       "G06: su anexo I asigna las autoridades de vigilancia «según el Proyecto de Ley Orgánica».",
+       "G05: guías de la AESIA, la autoridad central que prevé el proyecto."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Estado actual: fuentes.csv avisa de que la disolución de las Cortes (RD 806/2026) afecta a los proyectos en tramitación, lo que podría hacerlo decaer. Comprobarlo en la web del Congreso o en el BOE.",
+       "La página enlaza un PDF con la presentación del proyecto, que no se ha descargado (enlace en la copia .md)."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "N04",
+    "tipo": "norma",
+    "ambito": "España",
+    "organismo": "Gobierno de España (Consejo de Ministros; Ministerio para la Transformación Digital y de la Función Pública)",
+    "titulo": "Proyecto de Ley Orgánica para el buen uso y la gobernanza de la inteligencia artificial (referencia del Consejo de Ministros)",
+    "fecha": "2026-05-26",
+    "estado": "PENDIENTE",
+    "vinculante": "no",
+    "temas": "gobernanza y supervisión; sector público; prácticas prohibidas; alto riesgo",
+    "resumen": "Referencia del Consejo de Ministros que aprueba el proyecto de ley orgánica que adapta el RIA al marco español y lo remite a las Cortes. Prevé clasificación por riesgo, régimen sancionador, supervisión humana obligatoria, la AESIA como autoridad central con otras autoridades sectoriales (Banco de España, AEPD, CGPJ) y la figura del delegado de IA en el sector público estatal.",
+    "archivo": "normas/2026-05-26_gobierno-espana_proyecto-ley-gobernanza-ia.md",
+    "ficha": "fichas/2026-05-26_gobierno-espana_proyecto-ley-gobernanza-ia.md",
+    "url": "https://www.lamoncloa.gob.es/consejodeministros/resumenes/Paginas/2026/260526-rueda-prensa-ministros.aspx",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: la referencia está fechada «26.5.2026». Estado: la referencia de 2026-05-26 dice que el proyecto «se remite a las Cortes para el inicio de su tramitación»; lo descargado no dice nada posterior. Vinculante: es un proyecto de ley, no una ley aprobada."
+   }
+  },
+  {
+   "id": "G01",
+   "tipo": "guia",
+   "ambito": "UE",
+   "pais": "",
+   "organismo": "Comisión Europea",
+   "titulo": "Guidelines on prohibited artificial intelligence practices established by Regulation (EU) 2024/1689 (AI Act)",
+   "corto": "Directrices sobre prácticas de IA prohibidas",
+   "fecha": "2025-02-04",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "prácticas prohibidas"
+   ],
+   "resumen": "Página de la Comisión que presenta sus directrices sobre las prácticas de IA prohibidas por el RIA (manipulación dañina, puntuación social, identificación biométrica remota en tiempo real, entre otras). Explican la interpretación de la Comisión con ejemplos prácticos, pero no son vinculantes. Las directrices están disponibles en todas las lenguas de la UE, también en español.",
+   "archivo": "guias/2025-02-04_comision-europea_directrices-practicas-prohibidas.md",
+   "ficha_archivo": "fichas/2025-02-04_comision-europea_directrices-practicas-prohibidas.md",
+   "url": "https://digital-strategy.ec.europa.eu/en/library/commission-publishes-guidelines-prohibited-artificial-intelligence-ai-practices-defined-ai-act",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: línea «Publication 04 February 2025» de la página oficial. Estado: la página dice que las directrices «are non-binding» y que la interpretación vinculante corresponde al TJUE.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-02-04",
+     "texto": "publicación."
+    },
+    {
+     "fecha": "2025-07-31",
+     "texto": "última actualización de la página."
+    }
+   ],
+   "ficha": {
+    "titulo": "Directrices sobre prácticas de IA prohibidas",
+    "campos": [
+     [
+      "ID",
+      "G01"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "UE"
+     ],
+     [
+      "Organismo",
+      "Comisión Europea"
+     ],
+     [
+      "Fecha",
+      "2025-02-04 (fuente: línea «Publication 04 February 2025» de la página oficial)"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: la página dice que las directrices «are non-binding» y que la interpretación vinculante corresponde al TJUE; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "prácticas prohibidas"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "guias/2025-02-04_comision-europea_directrices-practicas-prohibidas.md"
+     ],
+     [
+      "URL oficial",
+      "https://digital-strategy.ec.europa.eu/en/library/commission-publishes-guidelines-prohibited-artificial-intelligence-ai-practices-defined-ai-act"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Página de la Comisión que presenta sus directrices sobre las prácticas de IA prohibidas por el RIA (manipulación dañina, puntuación social, identificación biométrica remota en tiempo real, entre otras). Explican la interpretación de la Comisión con ejemplos prácticos, pero no son vinculantes. Las directrices están disponibles en todas las lenguas de la UE, también en español."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Sirve para comprobar si un uso de IA que se plantee cae en una práctica prohibida antes de ponerlo en marcha."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-02-04: publicación.",
+       "2025-07-31: última actualización de la página."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "N01: desarrollan el art. 5 del RIA (N01 no se pudo descargar).",
+       "G02: la Comisión publicó ambas directrices a la vez.",
+       "G06: la guía de la AESIA resume las mismas prohibiciones."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "El texto de las directrices (PDF en español y demás idiomas) no se ha descargado: los enlaces están en la copia .md.",
+       "La fecha de publicación sale de la página oficial; la copia .md no recoge esa línea."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G01",
+    "tipo": "guia",
+    "ambito": "UE",
+    "organismo": "Comisión Europea",
+    "titulo": "Guidelines on prohibited artificial intelligence practices established by Regulation (EU) 2024/1689 (AI Act)",
+    "fecha": "2025-02-04",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "prácticas prohibidas",
+    "resumen": "Página de la Comisión que presenta sus directrices sobre las prácticas de IA prohibidas por el RIA (manipulación dañina, puntuación social, identificación biométrica remota en tiempo real, entre otras). Explican la interpretación de la Comisión con ejemplos prácticos, pero no son vinculantes. Las directrices están disponibles en todas las lenguas de la UE, también en español.",
+    "archivo": "guias/2025-02-04_comision-europea_directrices-practicas-prohibidas.md",
+    "ficha": "fichas/2025-02-04_comision-europea_directrices-practicas-prohibidas.md",
+    "url": "https://digital-strategy.ec.europa.eu/en/library/commission-publishes-guidelines-prohibited-artificial-intelligence-ai-practices-defined-ai-act",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: línea «Publication 04 February 2025» de la página oficial. Estado: la página dice que las directrices «are non-binding» y que la interpretación vinculante corresponde al TJUE."
+   }
+  },
+  {
+   "id": "G02",
+   "tipo": "guia",
+   "ambito": "UE",
+   "pais": "",
+   "organismo": "Comisión Europea",
+   "titulo": "Guidelines on the definition of an artificial intelligence system established by Regulation (EU) 2024/1689 (AI Act)",
+   "corto": "Directrices sobre la definición de sistema de IA",
+   "fecha": "2025-02-06",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "definiciones y ámbito"
+   ],
+   "resumen": "Página de la Comisión que presenta sus directrices para decidir si un programa es un «sistema de IA» según el RIA. Se dirigen a proveedores y otras personas afectadas, no son vinculantes y se irán actualizando. Recuerda que desde el 2 de febrero de 2025 se aplican la definición, la alfabetización en IA y las prohibiciones.",
+   "archivo": "guias/2025-02-06_comision-europea_directrices-definicion-sistema-ia.md",
+   "ficha_archivo": "fichas/2025-02-06_comision-europea_directrices-definicion-sistema-ia.md",
+   "url": "https://digital-strategy.ec.europa.eu/en/library/commission-publishes-guidelines-ai-system-definition-facilitate-first-ai-acts-rules-application",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: línea «Publication 06 February 2025» de la página oficial. Estado: la página dice que las directrices «are not binding» y que se actualizarán con la práctica.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-02-02",
+     "texto": "empiezan a aplicarse las primeras normas del RIA (definición, alfabetización y prohibiciones)."
+    },
+    {
+     "fecha": "2025-02-06",
+     "texto": "publicación."
+    },
+    {
+     "fecha": "2026-11-05",
+     "texto": "última actualización de la página."
+    }
+   ],
+   "ficha": {
+    "titulo": "Directrices sobre la definición de sistema de IA",
+    "campos": [
+     [
+      "ID",
+      "G02"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "UE"
+     ],
+     [
+      "Organismo",
+      "Comisión Europea"
+     ],
+     [
+      "Fecha",
+      "2025-02-06 (fuente: línea «Publication 06 February 2025» de la página oficial)"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: la página dice que las directrices «are not binding» y que se actualizarán con la práctica; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "definiciones y ámbito"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "guias/2025-02-06_comision-europea_directrices-definicion-sistema-ia.md"
+     ],
+     [
+      "URL oficial",
+      "https://digital-strategy.ec.europa.eu/en/library/commission-publishes-guidelines-ai-system-definition-facilitate-first-ai-acts-rules-application"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Página de la Comisión que presenta sus directrices para decidir si un programa es un «sistema de IA» según el RIA. Se dirigen a proveedores y otras personas afectadas, no son vinculantes y se irán actualizando. Recuerda que desde el 2 de febrero de 2025 se aplican la definición, la alfabetización en IA y las prohibiciones."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Es el primer filtro: si una herramienta no es un sistema de IA según esta definición, el RIA no le aplica."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-02-02: empiezan a aplicarse las primeras normas del RIA (definición, alfabetización y prohibiciones).",
+       "2025-02-06: publicación.",
+       "2026-11-05: última actualización de la página."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "N01: desarrollan el art. 3.1 del RIA (N01 no se pudo descargar).",
+       "G01: publicadas a la vez que las de prácticas prohibidas.",
+       "G11: la definición de la OCDE es la que usa la UE, según la página de la OCDE."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "El texto de las directrices no se ha descargado: los enlaces están en la copia .md.",
+       "La página se actualizó el 2026-11-05: comprobar qué ha cambiado.",
+       "La fecha de publicación sale de la página oficial; la copia .md no recoge esa línea."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G02",
+    "tipo": "guia",
+    "ambito": "UE",
+    "organismo": "Comisión Europea",
+    "titulo": "Guidelines on the definition of an artificial intelligence system established by Regulation (EU) 2024/1689 (AI Act)",
+    "fecha": "2025-02-06",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "definiciones y ámbito",
+    "resumen": "Página de la Comisión que presenta sus directrices para decidir si un programa es un «sistema de IA» según el RIA. Se dirigen a proveedores y otras personas afectadas, no son vinculantes y se irán actualizando. Recuerda que desde el 2 de febrero de 2025 se aplican la definición, la alfabetización en IA y las prohibiciones.",
+    "archivo": "guias/2025-02-06_comision-europea_directrices-definicion-sistema-ia.md",
+    "ficha": "fichas/2025-02-06_comision-europea_directrices-definicion-sistema-ia.md",
+    "url": "https://digital-strategy.ec.europa.eu/en/library/commission-publishes-guidelines-ai-system-definition-facilitate-first-ai-acts-rules-application",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: línea «Publication 06 February 2025» de la página oficial. Estado: la página dice que las directrices «are not binding» y que se actualizarán con la práctica."
+   }
+  },
+  {
+   "id": "G03",
+   "tipo": "guia",
+   "ambito": "UE",
+   "pais": "",
+   "organismo": "Comisión Europea",
+   "titulo": "Commission publishes guidelines for providers of general-purpose AI models",
+   "corto": "Directrices para proveedores de modelos de IA de uso general",
+   "fecha": "2025-07-18",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "IA de uso general (GPAI)"
+   ],
+   "resumen": "Nota de prensa de la Comisión sobre sus directrices para los proveedores de modelos de IA de uso general, cuyas obligaciones se aplican desde el 2 de agosto de 2025. Las directrices definen estos modelos (más de 10^23 FLOP de cómputo y capacidad de generar lenguaje, imagen o vídeo), qué es un «proveedor» y las exenciones para modelos de código abierto, y complementan el código de buenas prácticas.",
+   "archivo": "guias/2025-07-18_comision-europea_directrices-proveedores-gpai.md",
+   "ficha_archivo": "fichas/2025-07-18_comision-europea_directrices-proveedores-gpai.md",
+   "url": "https://digital-strategy.ec.europa.eu/en/news/commission-publishes-guidelines-providers-general-purpose-ai-models",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: la página indica «Publication 18 July 2025». Estado: son directrices de la Comisión (criterios de clasificación); la página no dice expresamente si vinculan.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-07-18",
+     "texto": "publicación."
+    },
+    {
+     "fecha": "2025-08-02",
+     "texto": "empiezan a aplicarse las obligaciones de los proveedores de modelos de uso general."
+    }
+   ],
+   "ficha": {
+    "titulo": "Directrices para proveedores de modelos de IA de uso general",
+    "campos": [
+     [
+      "ID",
+      "G03"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "UE"
+     ],
+     [
+      "Organismo",
+      "Comisión Europea"
+     ],
+     [
+      "Fecha",
+      "2025-07-18 (fuente: la página indica «Publication 18 July 2025»)"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: son directrices de la Comisión (criterios de clasificación); la página no dice expresamente si vinculan; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "IA de uso general (GPAI)"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "guias/2025-07-18_comision-europea_directrices-proveedores-gpai.md"
+     ],
+     [
+      "URL oficial",
+      "https://digital-strategy.ec.europa.eu/en/news/commission-publishes-guidelines-providers-general-purpose-ai-models"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Nota de prensa de la Comisión sobre sus directrices para los proveedores de modelos de IA de uso general, cuyas obligaciones se aplican desde el 2 de agosto de 2025. Las directrices definen estos modelos (más de 10^23 FLOP de cómputo y capacidad de generar lenguaje, imagen o vídeo), qué es un «proveedor» y las exenciones para modelos de código abierto, y complementan el código de buenas prácticas."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Útil solo si la organización entrena o adapta modelos; como usuaria de modelos ajenos, sirve para saber qué debe cumplir el proveedor."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-07-18: publicación.",
+       "2025-08-02: empiezan a aplicarse las obligaciones de los proveedores de modelos de uso general."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G04: las directrices complementan el código de buenas prácticas.",
+       "N01: desarrollan las obligaciones del RIA para modelos de uso general (no descargado)."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Las directrices están en otra página de la Comisión, enlazada pero no seguida: el único PDF de la página es su versión imprimible."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G03",
+    "tipo": "guia",
+    "ambito": "UE",
+    "organismo": "Comisión Europea",
+    "titulo": "Commission publishes guidelines for providers of general-purpose AI models",
+    "fecha": "2025-07-18",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "IA de uso general (GPAI)",
+    "resumen": "Nota de prensa de la Comisión sobre sus directrices para los proveedores de modelos de IA de uso general, cuyas obligaciones se aplican desde el 2 de agosto de 2025. Las directrices definen estos modelos (más de 10^23 FLOP de cómputo y capacidad de generar lenguaje, imagen o vídeo), qué es un «proveedor» y las exenciones para modelos de código abierto, y complementan el código de buenas prácticas.",
+    "archivo": "guias/2025-07-18_comision-europea_directrices-proveedores-gpai.md",
+    "ficha": "fichas/2025-07-18_comision-europea_directrices-proveedores-gpai.md",
+    "url": "https://digital-strategy.ec.europa.eu/en/news/commission-publishes-guidelines-providers-general-purpose-ai-models",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: la página indica «Publication 18 July 2025». Estado: son directrices de la Comisión (criterios de clasificación); la página no dice expresamente si vinculan."
+   }
+  },
+  {
+   "id": "G04",
+   "tipo": "guia",
+   "ambito": "UE",
+   "pais": "",
+   "organismo": "Comisión Europea (página); código redactado por expertos independientes en un proceso con múltiples partes",
+   "titulo": "The General-Purpose AI Code of Practice",
+   "corto": "Código de buenas prácticas de IA de uso general",
+   "fecha": "2025-07-10",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "IA de uso general (GPAI)",
+    "transparencia y contenido generado",
+    "propiedad intelectual"
+   ],
+   "resumen": "Código voluntario con tres capítulos (transparencia, derechos de autor, y seguridad), pensado para que los proveedores de modelos de uso general demuestren que cumplen los arts. 53 y 55 del RIA. La Comisión y el Comité de IA lo consideran adecuado. La página recoge la lista de firmantes; xAI solo firmó el capítulo de seguridad.",
+   "archivo": "guias/2025-07-10_oficina-europea-ia_codigo-buenas-practicas-gpai.md",
+   "ficha_archivo": "fichas/2025-07-10_oficina-europea-ia_codigo-buenas-practicas-gpai.md",
+   "url": "https://digital-strategy.ec.europa.eu/en/policies/contents-code-gpai",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: la página dice que el código «was published on July 10, 2025». Estado: la página lo describe como «a voluntary tool». Vinculante: voluntario; quien lo firma puede usarlo para demostrar que cumple el RIA.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-07-10",
+     "texto": "publicación del código."
+    },
+    {
+     "fecha": "2026-11-25",
+     "texto": "última actualización de la página (lista de firmantes)."
+    }
+   ],
+   "ficha": {
+    "titulo": "Código de buenas prácticas de IA de uso general",
+    "campos": [
+     [
+      "ID",
+      "G04"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "UE"
+     ],
+     [
+      "Organismo",
+      "Comisión Europea (página); código redactado por expertos independientes en un proceso con múltiples partes"
+     ],
+     [
+      "Fecha",
+      "2025-07-10 (fuente: la página dice que el código «was published on July 10, 2025»)"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: la página lo describe como «a voluntary tool»; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no (voluntario; quien lo firma puede usarlo para demostrar que cumple el RIA)"
+     ],
+     [
+      "Temas",
+      "IA de uso general (GPAI); transparencia y contenido generado; propiedad intelectual"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "guias/2025-07-10_oficina-europea-ia_codigo-buenas-practicas-gpai.md"
+     ],
+     [
+      "URL oficial",
+      "https://digital-strategy.ec.europa.eu/en/policies/contents-code-gpai"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Código voluntario con tres capítulos (transparencia, derechos de autor, y seguridad), pensado para que los proveedores de modelos de uso general demuestren que cumplen los arts. 53 y 55 del RIA. La Comisión y el Comité de IA lo consideran adecuado. La página recoge la lista de firmantes; xAI solo firmó el capítulo de seguridad."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Permite saber qué proveedores de modelos lo han firmado, un dato útil al elegir herramientas."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-07-10: publicación del código.",
+       "2026-11-25: última actualización de la página (lista de firmantes)."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G03: las directrices de la Comisión complementan el código.",
+       "C04: el capítulo de derechos de autor trata lo que se discute en GEMA contra OpenAI."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Los tres capítulos (PDF) no se han descargado: los enlaces están en la copia .md.",
+       "La lista de firmantes cambia; comprobarla en la página oficial."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G04",
+    "tipo": "guia",
+    "ambito": "UE",
+    "organismo": "Comisión Europea (página); código redactado por expertos independientes en un proceso con múltiples partes",
+    "titulo": "The General-Purpose AI Code of Practice",
+    "fecha": "2025-07-10",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "IA de uso general (GPAI); transparencia y contenido generado; propiedad intelectual",
+    "resumen": "Código voluntario con tres capítulos (transparencia, derechos de autor, y seguridad), pensado para que los proveedores de modelos de uso general demuestren que cumplen los arts. 53 y 55 del RIA. La Comisión y el Comité de IA lo consideran adecuado. La página recoge la lista de firmantes; xAI solo firmó el capítulo de seguridad.",
+    "archivo": "guias/2025-07-10_oficina-europea-ia_codigo-buenas-practicas-gpai.md",
+    "ficha": "fichas/2025-07-10_oficina-europea-ia_codigo-buenas-practicas-gpai.md",
+    "url": "https://digital-strategy.ec.europa.eu/en/policies/contents-code-gpai",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: la página dice que el código «was published on July 10, 2025». Estado: la página lo describe como «a voluntary tool». Vinculante: voluntario; quien lo firma puede usarlo para demostrar que cumple el RIA."
+   }
+  },
+  {
+   "id": "G05",
+   "tipo": "guia",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "AESIA",
+   "titulo": "Guías (Recursos para el uso de IA)",
+   "corto": "Guías de la AESIA para cumplir el RIA (índice)",
+   "fecha": "PENDIENTE",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "alto riesgo",
+    "definiciones y ámbito"
+   ],
+   "resumen": "Página índice de las 16 guías de la AESIA para cumplir el RIA, elaboradas en el sandbox español de IA: dos introductorias (01 y 02), trece técnicas (03 a 15) y un manual de checklists (16). No son vinculantes y se actualizarán conforme al Ómnibus digital.",
+   "archivo": "guias/2025-12-11_aesia_guias-cumplimiento-ria.md",
+   "ficha_archivo": "fichas/2025-12-11_aesia_guias-cumplimiento-ria.md",
+   "url": "https://aesia.digital.gob.es/es/guias",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: la página no indica fecha (fuentes.csv da 2025-12-11). Estado: la página dice que las guías «no tienen carácter vinculante ni sustituyen ni desarrollan la normativa aplicable».",
+   "origen": "alta inicial",
+   "fechas_clave": [],
+   "ficha": {
+    "titulo": "Guías de la AESIA para cumplir el RIA (índice)",
+    "campos": [
+     [
+      "ID",
+      "G05"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "AESIA"
+     ],
+     [
+      "Fecha",
+      "PENDIENTE (fuente: la página no indica fecha (fuentes.csv da 2025-12-11))"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: la página dice que las guías «no tienen carácter vinculante ni sustituyen ni desarrollan la normativa aplicable»; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "alto riesgo; definiciones y ámbito"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "guias/2025-12-11_aesia_guias-cumplimiento-ria.md"
+     ],
+     [
+      "URL oficial",
+      "https://aesia.digital.gob.es/es/guias"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Página índice de las 16 guías de la AESIA para cumplir el RIA, elaboradas en el sandbox español de IA: dos introductorias (01 y 02), trece técnicas (03 a 15) y un manual de checklists (16). No son vinculantes y se actualizarán conforme al Ómnibus digital."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Punto de partida para elegir qué guías técnicas descargar según el sector y el tipo de sistema."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "PENDIENTE: la página no da fechas."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G06 y G07: son las guías 01 y 02 de esta lista.",
+       "N02: la página dice que las guías se actualizarán según el Ómnibus (no descargado)."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Fecha de publicación: no aparece en la página; las guías 01 y 02 dicen que su primera versión es del 2025-12-10.",
+       "Las guías 03 a 16 no se han descargado: los enlaces están en la copia .md."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G05",
+    "tipo": "guia",
+    "ambito": "España",
+    "organismo": "AESIA",
+    "titulo": "Guías (Recursos para el uso de IA)",
+    "fecha": "PENDIENTE",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "alto riesgo; definiciones y ámbito",
+    "resumen": "Página índice de las 16 guías de la AESIA para cumplir el RIA, elaboradas en el sandbox español de IA: dos introductorias (01 y 02), trece técnicas (03 a 15) y un manual de checklists (16). No son vinculantes y se actualizarán conforme al Ómnibus digital.",
+    "archivo": "guias/2025-12-11_aesia_guias-cumplimiento-ria.md",
+    "ficha": "fichas/2025-12-11_aesia_guias-cumplimiento-ria.md",
+    "url": "https://aesia.digital.gob.es/es/guias",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: la página no indica fecha (fuentes.csv da 2025-12-11). Estado: la página dice que las guías «no tienen carácter vinculante ni sustituyen ni desarrollan la normativa aplicable»."
+   }
+  },
+  {
+   "id": "G06",
+   "tipo": "guia",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "Ministerio para la Transformación Digital y de la Función Pública (© 2026), publicada por la AESIA; elaborada en el sandbox español de IA",
+   "titulo": "Guía 1. Introducción al reglamento de IA",
+   "corto": "Guía 01 de la AESIA: introducción al Reglamento de IA",
+   "fecha": "2026-07-17",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "definiciones y ámbito",
+    "alto riesgo",
+    "alfabetización y formación",
+    "transparencia y contenido generado",
+    "gobernanza y supervisión"
+   ],
+   "resumen": "Guía introductoria al RIA para quien empieza: niveles de riesgo, operadores, sandbox y obligaciones principales (alfabetización, transparencia, alto riesgo), con una tabla de fechas de aplicación. Versión 2.0, adaptada al Ómnibus digital. Su anexo asigna las autoridades de vigilancia según el proyecto de ley español.",
+   "archivo": "guias/2026-07-17_aesia_guia-01-introductoria-ria.pdf",
+   "ficha_archivo": "fichas/2026-07-17_aesia_guia-01-introductoria-ria.md",
+   "url": "https://aesia.digital.gob.es/storage/media/01-guia-introductoria-al-reglamento-de-ia.pdf",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: «Fecha de versión: 17 de julio de 2026» (versión 2.0; la 1.0 es del 10/12/2025). Estado: la guía dice que «no tiene carácter vinculante ni sustituye ni desarrolla la normativa aplicable».",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-02",
+     "texto": "se aplican las prohibiciones (tabla del apartado 3.4)."
+    },
+    {
+     "fecha": "2025-12-10",
+     "texto": "versión 1.0."
+    },
+    {
+     "fecha": "2026-07-17",
+     "texto": "versión 2.0, adaptada al Ómnibus digital."
+    }
+   ],
+   "ficha": {
+    "titulo": "Guía 01 de la AESIA: introducción al Reglamento de IA",
+    "campos": [
+     [
+      "ID",
+      "G06"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "Ministerio para la Transformación Digital y de la Función Pública (© 2026), publicada por la AESIA; elaborada en el sandbox español de IA"
+     ],
+     [
+      "Fecha",
+      "2026-07-17 (fuente: «Fecha de versión: 17 de julio de 2026» (versión 2.0; la 1.0 es del 10/12/2025))"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: la guía dice que «no tiene carácter vinculante ni sustituye ni desarrolla la normativa aplicable»; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "definiciones y ámbito; alto riesgo; alfabetización y formación; transparencia y contenido generado; gobernanza y supervisión"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "guias/2026-07-17_aesia_guia-01-introductoria-ria.pdf"
+     ],
+     [
+      "URL oficial",
+      "https://aesia.digital.gob.es/storage/media/01-guia-introductoria-al-reglamento-de-ia.pdf"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Guía introductoria al RIA para quien empieza: niveles de riesgo, operadores, sandbox y obligaciones principales (alfabetización, transparencia, alto riesgo), con una tabla de fechas de aplicación. Versión 2.0, adaptada al Ómnibus digital. Su anexo asigna las autoridades de vigilancia según el proyecto de ley español."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "La mejor primera lectura para el equipo: explica en 27 páginas qué exige el RIA y desde cuándo."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-02: se aplican las prohibiciones (tabla del apartado 3.4).",
+       "2025-12-10: versión 1.0.",
+       "2026-07-17: versión 2.0, adaptada al Ómnibus digital."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G05: es la guía 01 del índice de la AESIA.",
+       "G07: guía complementaria con ejemplos.",
+       "N02: está adaptada al Ómnibus (no descargado).",
+       "N04: el anexo I sigue el proyecto de ley para designar autoridades."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Archivo renombrado el 2026-11-26 con la fecha de la versión descargada (2026-07-17); fuentes.csv daba 2025-12-11 y la primera versión es del 2025-12-10.",
+       "Tabla de fechas del apartado 3.4 (pág. 23): el texto extraído mezcla columnas (aparecen diciembre de 2027 y agosto de 2028 para alto riesgo); comprobar a mano qué fecha corresponde a cada caso."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G06",
+    "tipo": "guia",
+    "ambito": "España",
+    "organismo": "Ministerio para la Transformación Digital y de la Función Pública (© 2026), publicada por la AESIA; elaborada en el sandbox español de IA",
+    "titulo": "Guía 1. Introducción al reglamento de IA",
+    "fecha": "2026-07-17",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "definiciones y ámbito; alto riesgo; alfabetización y formación; transparencia y contenido generado; gobernanza y supervisión",
+    "resumen": "Guía introductoria al RIA para quien empieza: niveles de riesgo, operadores, sandbox y obligaciones principales (alfabetización, transparencia, alto riesgo), con una tabla de fechas de aplicación. Versión 2.0, adaptada al Ómnibus digital. Su anexo asigna las autoridades de vigilancia según el proyecto de ley español.",
+    "archivo": "guias/2026-07-17_aesia_guia-01-introductoria-ria.pdf",
+    "ficha": "fichas/2026-07-17_aesia_guia-01-introductoria-ria.md",
+    "url": "https://aesia.digital.gob.es/storage/media/01-guia-introductoria-al-reglamento-de-ia.pdf",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: «Fecha de versión: 17 de julio de 2026» (versión 2.0; la 1.0 es del 10/12/2025). Estado: la guía dice que «no tiene carácter vinculante ni sustituye ni desarrolla la normativa aplicable»."
+   }
+  },
+  {
+   "id": "G07",
+   "tipo": "guia",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "Ministerio para la Transformación Digital y de la Función Pública (© 2026), publicada por la AESIA; elaborada en el sandbox español de IA",
+   "titulo": "Guía 2. Guía práctica y ejemplos para entender el Reglamento de Inteligencia Artificial",
+   "corto": "Guía 02 de la AESIA: guía práctica y ejemplos",
+   "fecha": "2026-07-17",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "definiciones y ámbito",
+    "alto riesgo"
+   ],
+   "resumen": "Explica las definiciones del RIA con cinco casos de uso (biometría en el trabajo, promoción de personal, ayudas sociales, bomba de insulina, detección de denuncias falsas) e introduce las guías técnicas. Versión 2.0, que incorpora las definiciones nuevas del Ómnibus digital.",
+   "archivo": "guias/2026-07-17_aesia_guia-02-practica-ejemplos-ria.pdf",
+   "ficha_archivo": "fichas/2026-07-17_aesia_guia-02-practica-ejemplos-ria.md",
+   "url": "https://aesia.digital.gob.es/storage/media/02-guia-practica-y-ejemplos-para-entender-el-reglamento-de-ia.pdf",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: «Fecha de versión: 17 de julio de 2026» (versión 2.0; la 1.0 es del 10/12/2025). Estado: la guía dice que «no tiene carácter vinculante ni sustituye ni desarrolla la normativa aplicable».",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-12-10",
+     "texto": "versión 1.0."
+    },
+    {
+     "fecha": "2026-07-17",
+     "texto": "versión 2.0, adaptada al Ómnibus digital."
+    }
+   ],
+   "ficha": {
+    "titulo": "Guía 02 de la AESIA: guía práctica y ejemplos",
+    "campos": [
+     [
+      "ID",
+      "G07"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "Ministerio para la Transformación Digital y de la Función Pública (© 2026), publicada por la AESIA; elaborada en el sandbox español de IA"
+     ],
+     [
+      "Fecha",
+      "2026-07-17 (fuente: «Fecha de versión: 17 de julio de 2026» (versión 2.0; la 1.0 es del 10/12/2025))"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: la guía dice que «no tiene carácter vinculante ni sustituye ni desarrolla la normativa aplicable»; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "definiciones y ámbito; alto riesgo"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "guias/2026-07-17_aesia_guia-02-practica-ejemplos-ria.pdf"
+     ],
+     [
+      "URL oficial",
+      "https://aesia.digital.gob.es/storage/media/02-guia-practica-y-ejemplos-para-entender-el-reglamento-de-ia.pdf"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Explica las definiciones del RIA con cinco casos de uso (biometría en el trabajo, promoción de personal, ayudas sociales, bomba de insulina, detección de denuncias falsas) e introduce las guías técnicas. Versión 2.0, que incorpora las definiciones nuevas del Ómnibus digital."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Ayuda a ver con ejemplos si un sistema concreto es de alto riesgo y qué papel tiene la organización (proveedor o responsable del despliegue)."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-12-10: versión 1.0.",
+       "2026-07-17: versión 2.0, adaptada al Ómnibus digital."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G05: es la guía 02 del índice de la AESIA.",
+       "G06: guía introductoria que la complementa.",
+       "N02: incorpora definiciones del Ómnibus (no descargado)."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Archivo renombrado el 2026-11-26 con la fecha de la versión descargada (2026-07-17); fuentes.csv daba 2025-12-11 y la primera versión es del 2025-12-10."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G07",
+    "tipo": "guia",
+    "ambito": "España",
+    "organismo": "Ministerio para la Transformación Digital y de la Función Pública (© 2026), publicada por la AESIA; elaborada en el sandbox español de IA",
+    "titulo": "Guía 2. Guía práctica y ejemplos para entender el Reglamento de Inteligencia Artificial",
+    "fecha": "2026-07-17",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "definiciones y ámbito; alto riesgo",
+    "resumen": "Explica las definiciones del RIA con cinco casos de uso (biometría en el trabajo, promoción de personal, ayudas sociales, bomba de insulina, detección de denuncias falsas) e introduce las guías técnicas. Versión 2.0, que incorpora las definiciones nuevas del Ómnibus digital.",
+    "archivo": "guias/2026-07-17_aesia_guia-02-practica-ejemplos-ria.pdf",
+    "ficha": "fichas/2026-07-17_aesia_guia-02-practica-ejemplos-ria.md",
+    "url": "https://aesia.digital.gob.es/storage/media/02-guia-practica-y-ejemplos-para-entender-el-reglamento-de-ia.pdf",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: «Fecha de versión: 17 de julio de 2026» (versión 2.0; la 1.0 es del 10/12/2025). Estado: la guía dice que «no tiene carácter vinculante ni sustituye ni desarrolla la normativa aplicable»."
+   }
+  },
+  {
+   "id": "G08",
+   "tipo": "guia",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "AEPD",
+   "titulo": "Inteligencia artificial agéntica desde la perspectiva de protección de datos",
+   "corto": "IA agéntica y protección de datos (AEPD)",
+   "fecha": "2026-02",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "agentes de IA",
+    "protección de datos y decisiones automatizadas"
+   ],
+   "resumen": "Orientaciones para responsables y encargados que usan agentes de IA en tratamientos de datos personales: qué es un agente y sus vulnerabilidades (acceso a datos, memoria, autonomía), cómo cumplir el RGPD (responsabilidades, art. 22, gestión del riesgo), amenazas como la inyección de instrucciones, y medidas.",
+   "archivo": "guias/2026-02-01_aepd_ia-agentica-proteccion-datos.pdf",
+   "ficha_archivo": "fichas/2026-02-01_aepd_ia-agentica-proteccion-datos.md",
+   "url": "https://www.aepd.es/guias/orientaciones-ia-agentica.pdf",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: portada: «V1.2 de febrero de 2026» (no da el día). Estado: son orientaciones de la AEPD (criterios de clasificación); el documento no se declara vinculante.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2026-02",
+     "texto": "versión 1.2."
+    }
+   ],
+   "ficha": {
+    "titulo": "IA agéntica y protección de datos (AEPD)",
+    "campos": [
+     [
+      "ID",
+      "G08"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "AEPD"
+     ],
+     [
+      "Fecha",
+      "2026-02 (fuente: portada: «V1.2 de febrero de 2026» (no da el día))"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: son orientaciones de la AEPD (criterios de clasificación); el documento no se declara vinculante; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "agentes de IA; protección de datos y decisiones automatizadas"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "guias/2026-02-01_aepd_ia-agentica-proteccion-datos.pdf"
+     ],
+     [
+      "URL oficial",
+      "https://www.aepd.es/guias/orientaciones-ia-agentica.pdf"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Orientaciones para responsables y encargados que usan agentes de IA en tratamientos de datos personales: qué es un agente y sus vulnerabilidades (acceso a datos, memoria, autonomía), cómo cumplir el RGPD (responsabilidades, art. 22, gestión del riesgo), amenazas como la inyección de instrucciones, y medidas."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Referencia directa para los agentes que se monten en la organización: qué revisar antes de dejar que un agente trate datos personales o actúe en su nombre."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2026-02: versión 1.2."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G09: guía anterior de la AEPD sobre RGPD e IA.",
+       "N03: aplica el RGPD, incluido su art. 22 (no descargado).",
+       "C05: trata el riesgo de un agente que actúa en nombre de la organización."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "El documento no indica el día de publicación (el nombre del archivo lleva 01 por fuentes.csv)."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G08",
+    "tipo": "guia",
+    "ambito": "España",
+    "organismo": "AEPD",
+    "titulo": "Inteligencia artificial agéntica desde la perspectiva de protección de datos",
+    "fecha": "2026-02",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "agentes de IA; protección de datos y decisiones automatizadas",
+    "resumen": "Orientaciones para responsables y encargados que usan agentes de IA en tratamientos de datos personales: qué es un agente y sus vulnerabilidades (acceso a datos, memoria, autonomía), cómo cumplir el RGPD (responsabilidades, art. 22, gestión del riesgo), amenazas como la inyección de instrucciones, y medidas.",
+    "archivo": "guias/2026-02-01_aepd_ia-agentica-proteccion-datos.pdf",
+    "ficha": "fichas/2026-02-01_aepd_ia-agentica-proteccion-datos.md",
+    "url": "https://www.aepd.es/guias/orientaciones-ia-agentica.pdf",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: portada: «V1.2 de febrero de 2026» (no da el día). Estado: son orientaciones de la AEPD (criterios de clasificación); el documento no se declara vinculante."
+   }
+  },
+  {
+   "id": "G09",
+   "tipo": "guia",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "AEPD",
+   "titulo": "Adecuación al RGPD de tratamientos que incorporan Inteligencia Artificial. Una introducción",
+   "corto": "Adecuación al RGPD de tratamientos con IA (AEPD)",
+   "fecha": "2020-02",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "protección de datos y decisiones automatizadas"
+   ],
+   "resumen": "Primera aproximación a cómo adecuar al RGPD productos y servicios con IA: legitimación, transparencia, derechos, decisiones automatizadas, exactitud, minimización, evaluación de impacto y proporcionalidad. Es de 2020, anterior al RIA.",
+   "archivo": "guias/2020-02-01_aepd_adecuacion-rgpd-ia.pdf",
+   "ficha_archivo": "fichas/2020-02-01_aepd_adecuacion-rgpd-ia.md",
+   "url": "https://www.aepd.es/guias/adecuacion-rgpd-ia.pdf",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: portada: «Febrero de 2020» (no da el día). Estado: guía de la AEPD (criterios de clasificación); el PDF parece llevar una marca de agua «EN REVISIÓN».",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2020-02",
+     "texto": "publicación."
+    }
+   ],
+   "ficha": {
+    "titulo": "Adecuación al RGPD de tratamientos con IA (AEPD)",
+    "campos": [
+     [
+      "ID",
+      "G09"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "AEPD"
+     ],
+     [
+      "Fecha",
+      "2020-02 (fuente: portada: «Febrero de 2020» (no da el día))"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: guía de la AEPD (criterios de clasificación); el PDF parece llevar una marca de agua «EN REVISIÓN»; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "protección de datos y decisiones automatizadas"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "guias/2020-02-01_aepd_adecuacion-rgpd-ia.pdf"
+     ],
+     [
+      "URL oficial",
+      "https://www.aepd.es/guias/adecuacion-rgpd-ia.pdf"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Primera aproximación a cómo adecuar al RGPD productos y servicios con IA: legitimación, transparencia, derechos, decisiones automatizadas, exactitud, minimización, evaluación de impacto y proporcionalidad. Es de 2020, anterior al RIA."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Sirve de contexto sobre RGPD e IA; para lo actual, conviene leerla junto a la guía de IA agéntica (G08)."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2020-02: publicación."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "N03: aplica el RGPD (no descargado).",
+       "G08: orientaciones más recientes de la AEPD.",
+       "C01 y C02: casos del TJUE sobre decisiones automatizadas (no descargados)."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "El texto extraído muestra en todas las páginas letras sueltas que parecen formar la marca de agua «EN REVISIÓN»: abrir el PDF y comprobarlo.",
+       "El documento no indica el día de publicación (el nombre del archivo lleva 01 por fuentes.csv)."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G09",
+    "tipo": "guia",
+    "ambito": "España",
+    "organismo": "AEPD",
+    "titulo": "Adecuación al RGPD de tratamientos que incorporan Inteligencia Artificial. Una introducción",
+    "fecha": "2020-02",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "protección de datos y decisiones automatizadas",
+    "resumen": "Primera aproximación a cómo adecuar al RGPD productos y servicios con IA: legitimación, transparencia, derechos, decisiones automatizadas, exactitud, minimización, evaluación de impacto y proporcionalidad. Es de 2020, anterior al RIA.",
+    "archivo": "guias/2020-02-01_aepd_adecuacion-rgpd-ia.pdf",
+    "ficha": "fichas/2020-02-01_aepd_adecuacion-rgpd-ia.md",
+    "url": "https://www.aepd.es/guias/adecuacion-rgpd-ia.pdf",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: portada: «Febrero de 2020» (no da el día). Estado: guía de la AEPD (criterios de clasificación); el PDF parece llevar una marca de agua «EN REVISIÓN»."
+   }
+  },
+  {
+   "id": "G10",
+   "tipo": "guia",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "AEPD",
+   "titulo": "Política general para el uso de IA generativa en procesos administrativos de la AEPD",
+   "corto": "Política de IA generativa de la AEPD",
+   "fecha": "2025-11-27",
+   "estado": "orientativo",
+   "vinculante": "parcial",
+   "temas": [
+    "sector público",
+    "gobernanza y supervisión",
+    "protección de datos y decisiones automatizadas",
+    "alfabetización y formación"
+   ],
+   "resumen": "Primera versión de la política interna de la AEPD para usar IA generativa en sus procesos administrativos: objetivos, casos de uso, riesgos, gobernanza (responsable de IA), trazabilidad y procedimientos de aprobación y revisión. Declara que no interpreta ni aplica el RIA.",
+   "archivo": "guias/2025-11-27_aepd_politica-ia-generativa.pdf",
+   "ficha_archivo": "fichas/2025-11-27_aepd_politica-ia-generativa.md",
+   "url": "https://www.aepd.es/documento/politica-iag-aepd.pdf",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: portada: «VERSIÓN: 27 DE NOVIEMBRE DE 2025». Estado: el documento dice que es una «política interna, aplicable exclusivamente a la AEPD», sin carácter interpretativo del RIA. Vinculante: obliga dentro de la AEPD; para cualquier otra organización es solo un ejemplo.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-11-27",
+     "texto": "primera versión."
+    }
+   ],
+   "ficha": {
+    "titulo": "Política de IA generativa de la AEPD",
+    "campos": [
+     [
+      "ID",
+      "G10"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "AEPD"
+     ],
+     [
+      "Fecha",
+      "2025-11-27 (fuente: portada: «VERSIÓN: 27 DE NOVIEMBRE DE 2025»)"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: el documento dice que es una «política interna, aplicable exclusivamente a la AEPD», sin carácter interpretativo del RIA; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "parcial (obliga dentro de la AEPD; para cualquier otra organización es solo un ejemplo)"
+     ],
+     [
+      "Temas",
+      "sector público; gobernanza y supervisión; protección de datos y decisiones automatizadas; alfabetización y formación"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "guias/2025-11-27_aepd_politica-ia-generativa.pdf"
+     ],
+     [
+      "URL oficial",
+      "https://www.aepd.es/documento/politica-iag-aepd.pdf"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Primera versión de la política interna de la AEPD para usar IA generativa en sus procesos administrativos: objetivos, casos de uso, riesgos, gobernanza (responsable de IA), trazabilidad y procedimientos de aprobación y revisión. Declara que no interpreta ni aplica el RIA."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Modelo práctico para redactar la política de uso de IA generativa de la propia organización."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-11-27: primera versión."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "N01: la política cita el RIA, pero declara expresamente que no lo interpreta (no descargado).",
+       "G08 y G09: otras guías de la AEPD sobre IA."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Es la primera versión: comprobar si hay otra más reciente."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G10",
+    "tipo": "guia",
+    "ambito": "España",
+    "organismo": "AEPD",
+    "titulo": "Política general para el uso de IA generativa en procesos administrativos de la AEPD",
+    "fecha": "2025-11-27",
+    "estado": "orientativo",
+    "vinculante": "parcial",
+    "temas": "sector público; gobernanza y supervisión; protección de datos y decisiones automatizadas; alfabetización y formación",
+    "resumen": "Primera versión de la política interna de la AEPD para usar IA generativa en sus procesos administrativos: objetivos, casos de uso, riesgos, gobernanza (responsable de IA), trazabilidad y procedimientos de aprobación y revisión. Declara que no interpreta ni aplica el RIA.",
+    "archivo": "guias/2025-11-27_aepd_politica-ia-generativa.pdf",
+    "ficha": "fichas/2025-11-27_aepd_politica-ia-generativa.md",
+    "url": "https://www.aepd.es/documento/politica-iag-aepd.pdf",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: portada: «VERSIÓN: 27 DE NOVIEMBRE DE 2025». Estado: el documento dice que es una «política interna, aplicable exclusivamente a la AEPD», sin carácter interpretativo del RIA. Vinculante: obliga dentro de la AEPD; para cualquier otra organización es solo un ejemplo."
+   }
+  },
+  {
+   "id": "G11",
+   "tipo": "guia",
+   "ambito": "Internacional",
+   "pais": "",
+   "organismo": "OCDE",
+   "titulo": "OECD AI Principles overview",
+   "corto": "Principios de IA de la OCDE",
+   "fecha": "2019-05",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "definiciones y ámbito",
+    "gobernanza y supervisión"
+   ],
+   "resumen": "Resumen de los cinco principios de la OCDE para una IA fiable y de sus cinco recomendaciones a los gobiernos, con la definición de sistema de IA y su ciclo de vida. Primer estándar intergubernamental sobre IA, con 47 adherentes, entre ellos la UE y España. Según la página, la UE, el Consejo de Europa, EE. UU. y la ONU usan su definición.",
+   "archivo": "guias/2019-05-22_ocde_principios-ia.md",
+   "ficha_archivo": "fichas/2019-05-22_ocde_principios-ia.md",
+   "url": "https://oecd.ai/en/ai-principles",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: la página dice que se adoptaron en mayo de 2019 y se actualizaron en mayo de 2024 (no da el día). Estado: forman parte de una Recomendación de la OCDE (criterios de clasificación).",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2019-05",
+     "texto": "adopción."
+    },
+    {
+     "fecha": "2024-05",
+     "texto": "actualización."
+    }
+   ],
+   "ficha": {
+    "titulo": "Principios de IA de la OCDE",
+    "campos": [
+     [
+      "ID",
+      "G11"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "Internacional"
+     ],
+     [
+      "Organismo",
+      "OCDE"
+     ],
+     [
+      "Fecha",
+      "2019-05 (fuente: la página dice que se adoptaron en mayo de 2019 y se actualizaron en mayo de 2024 (no da el día))"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: forman parte de una Recomendación de la OCDE (criterios de clasificación); consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "definiciones y ámbito; gobernanza y supervisión"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "guias/2019-05-22_ocde_principios-ia.md"
+     ],
+     [
+      "URL oficial",
+      "https://oecd.ai/en/ai-principles"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Resumen de los cinco principios de la OCDE para una IA fiable y de sus cinco recomendaciones a los gobiernos, con la definición de sistema de IA y su ciclo de vida. Primer estándar intergubernamental sobre IA, con 47 adherentes, entre ellos la UE y España. Según la página, la UE, el Consejo de Europa, EE. UU. y la ONU usan su definición."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Marco de principios de referencia y origen de la definición de sistema de IA que usa la UE."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2019-05: adopción.",
+       "2024-05: actualización."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G02: directrices de la Comisión sobre la definición de sistema de IA.",
+       "N05: el Consejo de Europa usa la definición de la OCDE, según esta página (no descargado).",
+       "G12: otro marco internacional de referencia."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "La página es un resumen; el texto completo de la Recomendación (OECD-LEGAL-0449) no se ha descargado.",
+       "El día de adopción no aparece (el nombre del archivo lleva 22 por fuentes.csv)."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G11",
+    "tipo": "guia",
+    "ambito": "Internacional",
+    "organismo": "OCDE",
+    "titulo": "OECD AI Principles overview",
+    "fecha": "2019-05",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "definiciones y ámbito; gobernanza y supervisión",
+    "resumen": "Resumen de los cinco principios de la OCDE para una IA fiable y de sus cinco recomendaciones a los gobiernos, con la definición de sistema de IA y su ciclo de vida. Primer estándar intergubernamental sobre IA, con 47 adherentes, entre ellos la UE y España. Según la página, la UE, el Consejo de Europa, EE. UU. y la ONU usan su definición.",
+    "archivo": "guias/2019-05-22_ocde_principios-ia.md",
+    "ficha": "fichas/2019-05-22_ocde_principios-ia.md",
+    "url": "https://oecd.ai/en/ai-principles",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: la página dice que se adoptaron en mayo de 2019 y se actualizaron en mayo de 2024 (no da el día). Estado: forman parte de una Recomendación de la OCDE (criterios de clasificación)."
+   }
+  },
+  {
+   "id": "G12",
+   "tipo": "guia",
+   "ambito": "Otro país",
+   "pais": "EE. UU.",
+   "organismo": "NIST (EE. UU.)",
+   "titulo": "AI Risk Management Framework",
+   "corto": "Marco de gestión de riesgos de IA del NIST (AI RMF 1.0)",
+   "fecha": "2023-01-26",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "gobernanza y supervisión"
+   ],
+   "resumen": "Página del marco voluntario del NIST para gestionar los riesgos de la IA en el diseño, desarrollo, uso y evaluación de productos y servicios. Tiene un playbook y un perfil para IA generativa (2024), y se está revisando dentro del plan de acción de IA de la Casa Blanca.",
+   "archivo": "guias/2023-01-26_nist_ai-rmf.md",
+   "ficha_archivo": "fichas/2023-01-26_nist_ai-rmf.md",
+   "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "País: EE. UU.. Fecha: la página dice «Released on January 26, 2023». Estado: la página dice que el marco «is intended for voluntary use».",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2023-01-26",
+     "texto": "publicación del AI RMF 1.0."
+    },
+    {
+     "fecha": "2023-03-30",
+     "texto": "lanzamiento del Trustworthy and Responsible AI Resource Center."
+    },
+    {
+     "fecha": "2024-07-26",
+     "texto": "perfil para IA generativa (NIST-AI-600-1)."
+    },
+    {
+     "fecha": "2026-04-07",
+     "texto": "nota conceptual de un perfil para infraestructuras críticas."
+    }
+   ],
+   "ficha": {
+    "titulo": "Marco de gestión de riesgos de IA del NIST (AI RMF 1.0)",
+    "campos": [
+     [
+      "ID",
+      "G12"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "Otro país (EE. UU.)"
+     ],
+     [
+      "Organismo",
+      "NIST (EE. UU.)"
+     ],
+     [
+      "Fecha",
+      "2023-01-26 (fuente: la página dice «Released on January 26, 2023»)"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: la página dice que el marco «is intended for voluntary use»; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "gobernanza y supervisión"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "guias/2023-01-26_nist_ai-rmf.md"
+     ],
+     [
+      "URL oficial",
+      "https://www.nist.gov/itl/ai-risk-management-framework"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Página del marco voluntario del NIST para gestionar los riesgos de la IA en el diseño, desarrollo, uso y evaluación de productos y servicios. Tiene un playbook y un perfil para IA generativa (2024), y se está revisando dentro del plan de acción de IA de la Casa Blanca."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Metodología práctica de gestión de riesgos de IA, útil para organizar los controles internos aunque sea de EE. UU."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2023-01-26: publicación del AI RMF 1.0.",
+       "2023-03-30: lanzamiento del Trustworthy and Responsible AI Resource Center.",
+       "2024-07-26: perfil para IA generativa (NIST-AI-600-1).",
+       "2026-04-07: nota conceptual de un perfil para infraestructuras críticas."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G11: principios de la OCDE, otro marco internacional."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "El PDF del marco (NIST.AI.100-1) no se ha descargado: el enlace está en la copia .md.",
+       "La página dice que el marco se está revisando: buscar si hay versión nueva.",
+       "Ámbito: fuentes.csv lo pone como «Internacional», pero es un organismo de EE. UU.; aquí va como «Otro país»."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "G12",
+    "tipo": "guia",
+    "ambito": "Otro país",
+    "organismo": "NIST (EE. UU.)",
+    "titulo": "AI Risk Management Framework",
+    "fecha": "2023-01-26",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "gobernanza y supervisión",
+    "resumen": "Página del marco voluntario del NIST para gestionar los riesgos de la IA en el diseño, desarrollo, uso y evaluación de productos y servicios. Tiene un playbook y un perfil para IA generativa (2024), y se está revisando dentro del plan de acción de IA de la Casa Blanca.",
+    "archivo": "guias/2023-01-26_nist_ai-rmf.md",
+    "ficha": "fichas/2023-01-26_nist_ai-rmf.md",
+    "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "País: EE. UU.. Fecha: la página dice «Released on January 26, 2023». Estado: la página dice que el marco «is intended for voluntary use»."
+   }
+  },
+  {
+   "id": "C03",
+   "tipo": "caso",
+   "ambito": "Otro país",
+   "pais": "Italia",
+   "organismo": "Garante per la protezione dei dati personali (Italia)",
+   "titulo": "ChatGPT, il Garante privacy chiude l’istruttoria. OpenAI dovrà realizzare una campagna informativa di sei mesi e pagare una sanzione di 15 milioni di euro",
+   "corto": "Sanción del Garante italiano a OpenAI por ChatGPT",
+   "fecha": "2024-11-02",
+   "estado": "recurrido / anulado",
+   "vinculante": "no",
+   "temas": [
+    "protección de datos y decisiones automatizadas"
+   ],
+   "resumen": "Comunicado del Garante: multa de 15 millones de euros a OpenAI y campaña informativa de seis meses por entrenar ChatGPT sin base jurídica, falta de transparencia, no notificar una brecha y no verificar la edad. Una nota añadida dice que el Tribunal de Roma acogió en 2026 la oposición presentada contra la resolución.",
+   "archivo": "casos/2024-12-20_garante-privacy_sancion-openai-chatgpt.md",
+   "ficha_archivo": "fichas/2024-12-20_garante-privacy_sancion-openai-chatgpt.md",
+   "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "País: Italia. Fecha: la página cita el «provvedimento n. 755 del 2 novembre 2024»; el comunicado es del 20 de diciembre de 2024. Estado: la página dice que la sentencia del Tribunal de Roma n.º 4153/2026, publicada el 18/03/2026, «accolta l’opposizione» contra la resolución, que se ha retirado temporalmente de la web. Vinculante: la resolución quedó sin efecto por la sentencia de 2026; falta saber si esa sentencia es firme.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2023-03",
+     "texto": "el Garante abre la investigación."
+    },
+    {
+     "fecha": "2024-11-02",
+     "texto": "resolución n.º 755."
+    },
+    {
+     "fecha": "2024-12-20",
+     "texto": "comunicado de prensa."
+    },
+    {
+     "fecha": "2026-03-18",
+     "texto": "publicación de la sentencia del Tribunal de Roma n.º 4153/2026, que acoge la oposición."
+    }
+   ],
+   "ficha": {
+    "titulo": "Sanción del Garante italiano a OpenAI por ChatGPT",
+    "campos": [
+     [
+      "ID",
+      "C03"
+     ],
+     [
+      "Tipo",
+      "caso"
+     ],
+     [
+      "Ámbito",
+      "Otro país (Italia)"
+     ],
+     [
+      "Organismo",
+      "Garante per la protezione dei dati personali (Italia)"
+     ],
+     [
+      "Fecha",
+      "2024-11-02 (fuente: la página cita el «provvedimento n. 755 del 2 novembre 2024»; el comunicado es del 20 de diciembre de 2024)"
+     ],
+     [
+      "Estado",
+      "recurrido / anulado (fuente: la página dice que la sentencia del Tribunal de Roma n.º 4153/2026, publicada el 18/03/2026, «accolta l’opposizione» contra la resolución, que se ha retirado temporalmente de la web; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no (la resolución quedó sin efecto por la sentencia de 2026; falta saber si esa sentencia es firme)"
+     ],
+     [
+      "Temas",
+      "protección de datos y decisiones automatizadas"
+     ],
+     [
+      "Idioma",
+      "it, en"
+     ],
+     [
+      "Archivo",
+      "casos/2024-12-20_garante-privacy_sancion-openai-chatgpt.md"
+     ],
+     [
+      "URL oficial",
+      "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Comunicado del Garante: multa de 15 millones de euros a OpenAI y campaña informativa de seis meses por entrenar ChatGPT sin base jurídica, falta de transparencia, no notificar una brecha y no verificar la edad. Una nota añadida dice que el Tribunal de Roma acogió en 2026 la oposición presentada contra la resolución."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Muestra qué reprochó una autoridad de protección de datos a un servicio de IA generativa, y que esas sanciones pueden caer en los tribunales."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2023-03: el Garante abre la investigación.",
+       "2024-11-02: resolución n.º 755.",
+       "2024-12-20: comunicado de prensa.",
+       "2026-03-18: publicación de la sentencia del Tribunal de Roma n.º 4153/2026, que acoge la oposición."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "N03: la sanción aplica el RGPD (no descargado).",
+       "C04: otro caso contra OpenAI, en este caso por derechos de autor."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Comprobar si la sentencia 4153/2026 es firme o si el Garante la ha recurrido.",
+       "El nombre del archivo lleva la fecha del comunicado (2024-12-20); la fecha de la resolución es 2024-11-02.",
+       "El Garante pasó el caso a la autoridad irlandesa (DPC) por las posibles infracciones continuadas: puede haber resoluciones posteriores."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "C03",
+    "tipo": "caso",
+    "ambito": "Otro país",
+    "organismo": "Garante per la protezione dei dati personali (Italia)",
+    "titulo": "ChatGPT, il Garante privacy chiude l’istruttoria. OpenAI dovrà realizzare una campagna informativa di sei mesi e pagare una sanzione di 15 milioni di euro",
+    "fecha": "2024-11-02",
+    "estado": "recurrido / anulado",
+    "vinculante": "no",
+    "temas": "protección de datos y decisiones automatizadas",
+    "resumen": "Comunicado del Garante: multa de 15 millones de euros a OpenAI y campaña informativa de seis meses por entrenar ChatGPT sin base jurídica, falta de transparencia, no notificar una brecha y no verificar la edad. Una nota añadida dice que el Tribunal de Roma acogió en 2026 la oposición presentada contra la resolución.",
+    "archivo": "casos/2024-12-20_garante-privacy_sancion-openai-chatgpt.md",
+    "ficha": "fichas/2024-12-20_garante-privacy_sancion-openai-chatgpt.md",
+    "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "País: Italia. Fecha: la página cita el «provvedimento n. 755 del 2 novembre 2024»; el comunicado es del 20 de diciembre de 2024. Estado: la página dice que la sentencia del Tribunal de Roma n.º 4153/2026, publicada el 18/03/2026, «accolta l’opposizione» contra la resolución, que se ha retirado temporalmente de la web. Vinculante: la resolución quedó sin efecto por la sentencia de 2026; falta saber si esa sentencia es firme."
+   }
+  },
+  {
+   "id": "C04",
+   "tipo": "caso",
+   "ambito": "Otro país",
+   "pais": "Alemania",
+   "organismo": "Landgericht München I (resumen informal de la OMPI)",
+   "titulo": "GEMA v OpenAI, Case No. 42 O 14139/24 (WIPO IP Judges Forum, resumen informal)",
+   "corto": "GEMA contra OpenAI: letras de canciones memorizadas",
+   "fecha": "2025-11-11",
+   "estado": "PENDIENTE",
+   "vinculante": "sí",
+   "temas": [
+    "propiedad intelectual",
+    "IA de uso general (GPAI)"
+   ],
+   "resumen": "El tribunal de Múnich da en lo sustancial la razón a GEMA: las letras de nueve canciones quedaron memorizadas en el modelo, lo que es una reproducción no amparada por la excepción de minería de textos, y OpenAI responde de las respuestas que las reproducen. Desestima la parte sobre atribución de autoría.",
+   "archivo": "casos/2025-11-11_lg-munchen_gema-openai.md",
+   "ficha_archivo": "fichas/2025-11-11_lg-munchen_gema-openai.md",
+   "url": "https://www.wipo.int/wipolex/en/text/600712",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "País: Alemania. Fecha: resumen de la OMPI: «Date of judgment: November 11, 2025». Estado: el resumen indica «First Instance» y no dice si se ha recurrido. Vinculante: sentencia de primera instancia: obliga a las partes mientras no se revoque.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2025-09-29",
+     "texto": "vista oral."
+    },
+    {
+     "fecha": "2025-11-11",
+     "texto": "sentencia."
+    }
+   ],
+   "ficha": {
+    "titulo": "GEMA contra OpenAI: letras de canciones memorizadas",
+    "campos": [
+     [
+      "ID",
+      "C04"
+     ],
+     [
+      "Tipo",
+      "caso"
+     ],
+     [
+      "Ámbito",
+      "Otro país (Alemania)"
+     ],
+     [
+      "Organismo",
+      "Landgericht München I (resumen informal de la OMPI)"
+     ],
+     [
+      "Fecha",
+      "2025-11-11 (fuente: resumen de la OMPI: «Date of judgment: November 11, 2025»)"
+     ],
+     [
+      "Estado",
+      "PENDIENTE (fuente: el resumen indica «First Instance» y no dice si se ha recurrido; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "sí (sentencia de primera instancia: obliga a las partes mientras no se revoque)"
+     ],
+     [
+      "Temas",
+      "propiedad intelectual; IA de uso general (GPAI)"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "casos/2025-11-11_lg-munchen_gema-openai.md"
+     ],
+     [
+      "URL oficial",
+      "https://www.wipo.int/wipolex/en/text/600712"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "El tribunal de Múnich da en lo sustancial la razón a GEMA: las letras de nueve canciones quedaron memorizadas en el modelo, lo que es una reproducción no amparada por la excepción de minería de textos, y OpenAI responde de las respuestas que las reproducen. Desestima la parte sobre atribución de autoría."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Señala el riesgo de propiedad intelectual de usar contenido generado que reproduzca obras protegidas."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2025-09-29: vista oral.",
+       "2025-11-11: sentencia."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G04: el capítulo de derechos de autor del código de buenas prácticas.",
+       "C03: otro caso contra OpenAI."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Comprobar si la sentencia se ha recurrido.",
+       "Es un resumen informal de la OMPI; la sentencia original, en alemán, no se ha descargado."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "C04",
+    "tipo": "caso",
+    "ambito": "Otro país",
+    "organismo": "Landgericht München I (resumen informal de la OMPI)",
+    "titulo": "GEMA v OpenAI, Case No. 42 O 14139/24 (WIPO IP Judges Forum, resumen informal)",
+    "fecha": "2025-11-11",
+    "estado": "PENDIENTE",
+    "vinculante": "sí",
+    "temas": "propiedad intelectual; IA de uso general (GPAI)",
+    "resumen": "El tribunal de Múnich da en lo sustancial la razón a GEMA: las letras de nueve canciones quedaron memorizadas en el modelo, lo que es una reproducción no amparada por la excepción de minería de textos, y OpenAI responde de las respuestas que las reproducen. Desestima la parte sobre atribución de autoría.",
+    "archivo": "casos/2025-11-11_lg-munchen_gema-openai.md",
+    "ficha": "fichas/2025-11-11_lg-munchen_gema-openai.md",
+    "url": "https://www.wipo.int/wipolex/en/text/600712",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "País: Alemania. Fecha: resumen de la OMPI: «Date of judgment: November 11, 2025». Estado: el resumen indica «First Instance» y no dice si se ha recurrido. Vinculante: sentencia de primera instancia: obliga a las partes mientras no se revoque."
+   }
+  },
+  {
+   "id": "C05",
+   "tipo": "caso",
+   "ambito": "Otro país",
+   "pais": "Canadá",
+   "organismo": "Civil Resolution Tribunal (Columbia Británica, Canadá)",
+   "titulo": "Moffatt v. Air Canada, 2024 BCCRT 149",
+   "corto": "Moffatt contra Air Canada: la empresa responde de su chatbot",
+   "fecha": "2024-02-14",
+   "estado": "PENDIENTE",
+   "vinculante": "sí",
+   "temas": [
+    "responsabilidad y consumidores"
+   ],
+   "resumen": "Reclamación de escasa cuantía: el chatbot de Air Canada informó mal sobre la tarifa por duelo. El tribunal rechaza que el chatbot sea «una entidad legal separada»: la empresa responde de toda la información de su web, venga de una página o de un chatbot. Condena a pagar 812,02 dólares canadienses.",
+   "archivo": "casos/2024-02-14_bc-crt_moffatt-air-canada.pdf",
+   "ficha_archivo": "fichas/2024-02-14_bc-crt_moffatt-air-canada.md",
+   "url": "https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "País: Canadá. Fecha: «Date Issued: February 14, 2024». Estado: la resolución no dice si es firme. Vinculante: obliga a las partes; según el párr. 47, se puede ejecutar como una orden del Provincial Court.",
+   "origen": "alta inicial",
+   "fechas_clave": [
+    {
+     "fecha": "2022-11-11",
+     "texto": "el cliente consulta el chatbot de Air Canada."
+    },
+    {
+     "fecha": "2024-02-14",
+     "texto": "resolución; Air Canada tiene 14 días para pagar."
+    }
+   ],
+   "ficha": {
+    "titulo": "Moffatt contra Air Canada: la empresa responde de su chatbot",
+    "campos": [
+     [
+      "ID",
+      "C05"
+     ],
+     [
+      "Tipo",
+      "caso"
+     ],
+     [
+      "Ámbito",
+      "Otro país (Canadá)"
+     ],
+     [
+      "Organismo",
+      "Civil Resolution Tribunal (Columbia Británica, Canadá)"
+     ],
+     [
+      "Fecha",
+      "2024-02-14 (fuente: «Date Issued: February 14, 2024»)"
+     ],
+     [
+      "Estado",
+      "PENDIENTE (fuente: la resolución no dice si es firme; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "sí (obliga a las partes; según el párr. 47, se puede ejecutar como una orden del Provincial Court)"
+     ],
+     [
+      "Temas",
+      "responsabilidad y consumidores"
+     ],
+     [
+      "Idioma",
+      "en"
+     ],
+     [
+      "Archivo",
+      "casos/2024-02-14_bc-crt_moffatt-air-canada.pdf"
+     ],
+     [
+      "URL oficial",
+      "https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Reclamación de escasa cuantía: el chatbot de Air Canada informó mal sobre la tarifa por duelo. El tribunal rechaza que el chatbot sea «una entidad legal separada»: la empresa responde de toda la información de su web, venga de una página o de un chatbot. Condena a pagar 812,02 dólares canadienses."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Recuerda que la organización responde de lo que diga cualquier asistente o agente de IA que ponga de cara al público."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2022-11-11: el cliente consulta el chatbot de Air Canada.",
+       "2024-02-14: resolución; Air Canada tiene 14 días para pagar."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G08: la guía de la AEPD trata la capacidad de los agentes de actuar en nombre de la organización."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "Comprobar si se pidió revisión judicial de la resolución."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "C05",
+    "tipo": "caso",
+    "ambito": "Otro país",
+    "organismo": "Civil Resolution Tribunal (Columbia Británica, Canadá)",
+    "titulo": "Moffatt v. Air Canada, 2024 BCCRT 149",
+    "fecha": "2024-02-14",
+    "estado": "PENDIENTE",
+    "vinculante": "sí",
+    "temas": "responsabilidad y consumidores",
+    "resumen": "Reclamación de escasa cuantía: el chatbot de Air Canada informó mal sobre la tarifa por duelo. El tribunal rechaza que el chatbot sea «una entidad legal separada»: la empresa responde de toda la información de su web, venga de una página o de un chatbot. Condena a pagar 812,02 dólares canadienses.",
+    "archivo": "casos/2024-02-14_bc-crt_moffatt-air-canada.pdf",
+    "ficha": "fichas/2024-02-14_bc-crt_moffatt-air-canada.md",
+    "url": "https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "País: Canadá. Fecha: «Date Issued: February 14, 2024». Estado: la resolución no dice si es firme. Vinculante: obliga a las partes; según el párr. 47, se puede ejecutar como una orden del Provincial Court."
+   }
+  },
+  {
+   "id": "NUEVO-20261126-1",
+   "tipo": "guia",
+   "ambito": "España",
+   "pais": "",
+   "organismo": "AEPD (Laboratorio de Privacidad) y su Red de Grupos de Investigación",
+   "titulo": "Declaración por una investigación en privacidad y nuevas tecnologías abierta, interdisciplinar y en red",
+   "corto": "Declaración AEPD por una investigación en privacidad y nuevas tecnologías",
+   "fecha": "2026-11",
+   "estado": "orientativo",
+   "vinculante": "no",
+   "temas": [
+    "protección de datos y decisiones automatizadas"
+   ],
+   "resumen": "Declaración del Laboratorio de Privacidad de la AEPD y su Red de Grupos de Investigación con nueve prioridades para investigar en privacidad y nuevas tecnologías. Sostiene que la normativa de protección de datos ya es de obligado cumplimiento para los sistemas de IA que tratan datos personales (la regulación de IA la complementa, no la sustituye) y señala cuestiones abiertas: datos identificables en los modelos, ejercicio de derechos, contenidos inexactos e inferencias de datos sensibles.",
+   "archivo": "guias/2026-11-26_aepd_declaracion-investigacion-privacidad.pdf",
+   "ficha_archivo": "fichas/2026-11-26_aepd_declaracion-investigacion-privacidad.md",
+   "url": "https://laboratorio.aepd.es/documento/declaracion-por-una-investigacion-en-privacidad-y-nuevas-tecnologias-abierta.pdf",
+   "fecha_consulta": "2026-11-26",
+   "fecha_alta": "2026-11-26",
+   "notas": "Fecha: el documento dice «Noviembre de 2026» (no da el día); la nota de prensa de la AEPD que lo publica es del 2026-11-26. Estado: es una declaración conjunta de prioridades de investigación; no establece obligaciones.",
+   "origen": "rutina semanal",
+   "fechas_clave": [
+    {
+     "fecha": "2026-11",
+     "texto": "versión final de la Declaración, tras consulta a los grupos de la Red."
+    },
+    {
+     "fecha": "2026-11-26",
+     "texto": "la AEPD la publica (nota de prensa)."
+    }
+   ],
+   "ficha": {
+    "titulo": "Declaración AEPD por una investigación en privacidad y nuevas tecnologías",
+    "campos": [
+     [
+      "ID",
+      "NUEVO-20261126-1"
+     ],
+     [
+      "Tipo",
+      "guia"
+     ],
+     [
+      "Ámbito",
+      "España"
+     ],
+     [
+      "Organismo",
+      "AEPD (Laboratorio de Privacidad) y su Red de Grupos de Investigación"
+     ],
+     [
+      "Fecha",
+      "2026-11 (fuente: el documento dice «Noviembre de 2026» (no da el día); la nota de prensa de la AEPD que lo publica es del 2026-11-26)"
+     ],
+     [
+      "Estado",
+      "orientativo (fuente: es una declaración conjunta de prioridades de investigación; no establece obligaciones; consultado el 2026-11-26)"
+     ],
+     [
+      "Vinculante",
+      "no"
+     ],
+     [
+      "Temas",
+      "protección de datos y decisiones automatizadas"
+     ],
+     [
+      "Idioma",
+      "es"
+     ],
+     [
+      "Archivo",
+      "guias/2026-11-26_aepd_declaracion-investigacion-privacidad.pdf"
+     ],
+     [
+      "URL oficial",
+      "https://laboratorio.aepd.es/documento/declaracion-por-una-investigacion-en-privacidad-y-nuevas-tecnologias-abierta.pdf"
+     ],
+     [
+      "Fecha de consulta",
+      "2026-11-26"
+     ]
+    ],
+    "secciones": [
+     {
+      "titulo": "Resumen (tres líneas)",
+      "parrafos": [
+       "Declaración del Laboratorio de Privacidad de la AEPD y su Red de Grupos de Investigación con nueve prioridades para investigar en privacidad y nuevas tecnologías. Sostiene que la normativa de protección de datos ya es de obligado cumplimiento para los sistemas de IA que tratan datos personales (la regulación de IA la complementa, no la sustituye) y señala cuestiones abiertas: datos identificables en los modelos, ejercicio de derechos, contenidos inexactos e inferencias de datos sensibles."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Para qué me sirve",
+      "parrafos": [
+       "Respalda que todo uso de IA con datos personales debe cumplir ya el RGPD, sin esperar a la ley de IA: útil para argumentarlo en la política interna."
+      ],
+      "items": []
+     },
+     {
+      "titulo": "Fechas clave",
+      "parrafos": [],
+      "items": [
+       "2026-11: versión final de la Declaración, tras consulta a los grupos de la Red.",
+       "2026-11-26: la AEPD la publica (nota de prensa)."
+      ]
+     },
+     {
+      "titulo": "Relacionado con",
+      "parrafos": [],
+      "items": [
+       "G08: orientaciones de la AEPD sobre IA agéntica y protección de datos.",
+       "G09: guía de la AEPD sobre adecuación al RGPD de tratamientos con IA.",
+       "N03: el RGPD, marco que la Declaración considera ya aplicable a la IA (no descargado)."
+      ]
+     },
+     {
+      "titulo": "Comprobaciones",
+      "parrafos": [],
+      "items": [
+       "El documento solo da mes y año; el día del nombre del archivo (26) sale de la nota de prensa de la AEPD: https://www.aepd.es/prensa-y-comunicacion/notas-de-prensa/aepd-y-su-red-de-grupos-de-investigacion-suscriben-declaracion-privacidad",
+       "Es una declaración de prioridades de investigación, no una guía de cumplimiento.",
+       "Alta aprobada desde el informe novedades/2026-11-26.md (novedad n.º 1)."
+      ]
+     }
+    ]
+   },
+   "xlsx": {
+    "id": "NUEVO-20261126-1",
+    "tipo": "guia",
+    "ambito": "España",
+    "organismo": "AEPD (Laboratorio de Privacidad) y su Red de Grupos de Investigación",
+    "titulo": "Declaración por una investigación en privacidad y nuevas tecnologías abierta, interdisciplinar y en red",
+    "fecha": "2026-11",
+    "estado": "orientativo",
+    "vinculante": "no",
+    "temas": "protección de datos y decisiones automatizadas",
+    "resumen": "Declaración del Laboratorio de Privacidad de la AEPD y su Red de Grupos de Investigación con nueve prioridades para investigar en privacidad y nuevas tecnologías. Sostiene que la normativa de protección de datos ya es de obligado cumplimiento para los sistemas de IA que tratan datos personales (la regulación de IA la complementa, no la sustituye) y señala cuestiones abiertas: datos identificables en los modelos, ejercicio de derechos, contenidos inexactos e inferencias de datos sensibles.",
+    "archivo": "guias/2026-11-26_aepd_declaracion-investigacion-privacidad.pdf",
+    "ficha": "fichas/2026-11-26_aepd_declaracion-investigacion-privacidad.md",
+    "url": "https://laboratorio.aepd.es/documento/declaracion-por-una-investigacion-en-privacidad-y-nuevas-tecnologias-abierta.pdf",
+    "fecha_consulta": "2026-11-26",
+    "fecha_alta": "2026-11-26",
+    "notas": "Fecha: el documento dice «Noviembre de 2026» (no da el día); la nota de prensa de la AEPD que lo publica es del 2026-11-26. Estado: es una declaración conjunta de prioridades de investigación; no establece obligaciones."
+   }
+  }
+ ],
+ "novedades_hoja": [
+  {
+   "fecha_informe": "2026-11-26",
+   "titulo": "Declaración por una investigación en privacidad y nuevas tecnologías abierta, interdisciplinar y en red",
+   "organismo": "AEPD (Laboratorio de Privacidad) y su Red de Grupos de Investigación",
+   "url": "https://laboratorio.aepd.es/documento/declaracion-por-una-investigacion-en-privacidad-y-nuevas-tecnologias-abierta.pdf",
+   "tipo": "guia",
+   "temas": "protección de datos y decisiones automatizadas",
+   "por_que_importa": "Recuerda que la normativa de protección de datos ya obliga a los sistemas de IA que usan datos personales, y que las normas de IA la complementan.",
+   "decision": "añadir"
+  }
+ ],
+ "informes": [
+  {
+   "fecha": "2026-11-26",
+   "archivo": "novedades/2026-11-26.md",
+   "resumen": [
+    "Una novedad en el periodo: la AEPD publica una declaración sobre investigación en privacidad que recuerda que el RGPD ya se aplica a los sistemas de IA (2026-11-26).",
+    "No hay actos sobre IA en el Diario Oficial de la UE (289 actos de las series L y C) ni en el BOE (1.844 disposiciones), mirando los títulos.",
+    "AESIA no tiene guías nuevas y su última noticia es del 2026-11-12; la página de la Comisión se actualizó el 2026-11-25, sin documentos nuevos fechados en el periodo.",
+    "Cambios de estado: ninguno detectado. N04 sigue PENDIENTE y C03 no se puede comprobar con las fuentes de la rutina.",
+    "No se pudo consultar el TJUE (su web solo carga con JavaScript) ni buscar en el BOE el RD 806/2026."
+   ],
+   "documentos_nuevos": [
+    {
+     "titulo": "Declaración por una investigación en privacidad y nuevas tecnologías abierta, interdisciplinar y en red",
+     "urls": [
+      "https://www.aepd.es/prensa-y-comunicacion/notas-de-prensa/aepd-y-su-red-de-grupos-de-investigacion-suscriben-declaracion-privacidad",
+      "https://laboratorio.aepd.es/documento/declaracion-por-una-investigacion-en-privacidad-y-nuevas-tecnologias-abierta.pdf"
+     ]
+    }
+   ],
+   "cambios": [
+    {
+     "id": "N04",
+     "estado": "PENDIENTE (en tramitación según la referencia del 2026-05-26)",
+     "mirado": "BOE del 2026-11-19 al 2026-11-26",
+     "resultado": "Sin publicaciones sobre el proyecto. Sigue pendiente comprobar si la disolución de las Cortes (RD 806/2026) lo hizo decaer: el buscador del BOE no acepta consultas automáticas sencillas."
+    },
+    {
+     "id": "C03",
+     "estado": "recurrido / anulado",
+     "mirado": "—",
+     "resultado": "Sin comprobar: ninguna fuente de la rutina cubre al Garante italiano ni a los tribunales italianos."
+    }
+   ]
+  }
+ ]
+}</script>
+<script>
+(function () {
+  'use strict';
+
+  var DATOS = JSON.parse(document.getElementById('datos-biblioteca').textContent);
+  var DOCS = DATOS.documentos || [];
+  var INFORMES = DATOS.informes || [];
+  var POR_ID = {};
+  DOCS.forEach(function (d) { POR_ID[d.id] = d; });
+
+  var ETIQ_TIPO = { norma: 'Norma', guia: 'Guía', caso: 'Caso' };
+  var NOMBRE_TIPO = { norma: ['norma', 'normas'], guia: ['guía', 'guías'], caso: ['caso', 'casos'] };
+  var CLAVE_ESTADO = {
+    'vigente': 'vigente', 'aplicacion diferida': 'diferida', 'en tramitacion': 'tramitacion',
+    'decaido': 'decaido', 'orientativo': 'orientativo', 'firme': 'firme',
+    'recurrido / anulado': 'recurrido', 'pendiente': 'pendiente'
+  };
+  var ORDEN_ESTADO = ['vigente', 'aplicación diferida', 'en tramitación', 'firme', 'recurrido / anulado', 'decaído', 'orientativo', 'PENDIENTE'];
+  var COLUMNAS_CSV = ['id', 'tipo', 'ambito', 'organismo', 'titulo', 'fecha', 'estado', 'vinculante', 'temas',
+    'resumen', 'archivo', 'ficha', 'url', 'fecha_consulta', 'fecha_alta', 'notas'];
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  function $(id) { return document.getElementById(id); }
+  function norm(s) { return String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function svg(tag, attrs, txt) {
+    var e = document.createElementNS(SVGNS, tag);
+    Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function esUrl(u) { return /^https?:\/\/[^\s]+$/i.test(String(u || '')); }
+  function esRutaLocal(r) { r = String(r || ''); return /^[A-Za-z0-9_.\/-]+$/.test(r) && r.indexOf('..') < 0 && r.charAt(0) !== '/'; }
+  function claveEstado(e) { return CLAVE_ESTADO[norm(e)] || 'otro'; }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function hoyISO() { return iso(new Date()); }
+  function restarDias(f, n) { var p = f.split('-'); var d = new Date(+p[0], +p[1] - 1, +p[2]); d.setDate(d.getDate() - n); return iso(d); }
+  function claveFecha(f) {
+    var m = /^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?/.exec(String(f || ''));
+    return m ? m[1] + '-' + (m[2] || '00') + '-' + (m[3] || '00') : null;
+  }
+  function estadoBase(s) { return String(s || '').split(' (')[0].trim(); }
+  function plural(n, par) { return n + ' ' + (n === 1 ? par[0] : par[1]); }
+  function enumerar(partes) { return partes.length < 2 ? partes.join('') : partes.slice(0, -1).join(', ') + ' y ' + partes[partes.length - 1]; }
+  function etiquetaObliga(v) { var k = norm(v); return k === 'si' ? 'Obliga' : k === 'parcial' ? 'Obliga en parte' : k === 'no' ? 'No obliga' : 'Obliga: ' + v; }
+
+  function enlaceExterno(url, txt) {
+    var a = el('a', null, txt || url);
+    a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    return a;
+  }
+  function botonDoc(d, txt, cls) {
+    var b = el('button', cls || 'enlace-doc', txt || (d.corto || d.titulo));
+    b.type = 'button';
+    b.setAttribute('data-id', d.id);
+    return b;
+  }
+  function insigniaEstado(e) { return el('span', 'estado e-' + claveEstado(e), e || 'PENDIENTE'); }
+  function etiquetaTipo(t) {
+    var s = el('span', 'tipo tipo-' + t);
+    s.appendChild(el('span', 'marca c-' + t));
+    s.appendChild(document.createTextNode(ETIQ_TIPO[t] || t));
+    return s;
+  }
+
+  // Texto con enlaces a URL y a IDs de la biblioteca (sin innerHTML).
+  var RE_TOKEN = /(https?:\/\/[^\s<>«»"]+)|\b(NUEVO-\d{8}-\d+|[NGC]\d{2})\b/g;
+  function texto(s) {
+    s = String(s == null ? '' : s);
+    var frag = document.createDocumentFragment(), i = 0, m;
+    RE_TOKEN.lastIndex = 0;
+    while ((m = RE_TOKEN.exec(s)) !== null) {
+      if (m.index > i) frag.appendChild(document.createTextNode(s.slice(i, m.index)));
+      if (m[1]) {
+        var url = m[1].replace(/[.,;:)]+$/, '');
+        frag.appendChild(enlaceExterno(url));
+        i = m.index + url.length;
+        RE_TOKEN.lastIndex = i;
+        continue;
+      }
+      if (POR_ID[m[2]]) frag.appendChild(botonDoc(POR_ID[m[2]], m[2], 'enlace-id'));
+      else frag.appendChild(document.createTextNode(m[0]));
+      i = m.index + m[0].length;
+    }
+    if (i < s.length) frag.appendChild(document.createTextNode(s.slice(i)));
+    return frag;
+  }
+
+  DOCS.forEach(function (d) {
+    d.temas = d.temas || [];
+    d._busqueda = norm([d.titulo, d.corto, d.organismo, d.resumen, d.temas.join(' '), d.id].join(' '));
+  });
+  function cuenta(f) { return DOCS.filter(f).length; }
+
+  // ---------- Portada
+  function pintarPortada() {
+    $('fecha-actualizacion').textContent = DATOS.actualizado || '—';
+    var ult = INFORMES.length ? INFORMES[INFORMES.length - 1].fecha : null;
+    $('detalle-actualizacion').textContent = ult ? 'Último informe semanal: ' + ult : 'Sin informes semanales';
+    $('pie-generado').textContent = 'Página generada el ' + (DATOS.generado || '—') + '.';
+
+    var f = $('frase');
+    function fuerte(t) { f.appendChild(el('strong', null, t)); }
+    function txt(t) { f.appendChild(document.createTextNode(t)); }
+    var tipos = ['norma', 'guia', 'caso'].map(function (t) { return plural(cuenta(function (d) { return d.tipo === t; }), NOMBRE_TIPO[t]); });
+    fuerte(plural(DOCS.length, ['documento', 'documentos']));
+    txt(': ' + enumerar(tipos) + '. ');
+    var si = cuenta(function (d) { return norm(d.vinculante) === 'si'; });
+    var parcial = cuenta(function (d) { return norm(d.vinculante) === 'parcial'; });
+    var no = DOCS.length - si - parcial;
+    var partes = [];
+    partes.push(si === 1 ? '1 obliga' : si + ' obligan');
+    if (parcial) partes.push(parcial === 1 ? '1 obliga en parte' : parcial + ' obligan en parte');
+    partes.push(no === 1 ? '1 no obliga' : no + ' no obligan');
+    var cap = enumerar(partes);
+    fuerte(cap.charAt(0).toUpperCase() + cap.slice(1));
+    txt('. ');
+    var pend = cuenta(function (d) { return norm(d.estado) === 'pendiente'; });
+    if (pend) txt((pend === 1 ? '1 tiene' : pend + ' tienen') + ' el estado por comprobar.');
+
+    var barra = $('barra-estado'), ley = $('leyenda-estado');
+    var estados = ORDEN_ESTADO.filter(function (e) { return cuenta(function (d) { return d.estado === e; }); });
+    DOCS.forEach(function (d) { if (estados.indexOf(d.estado) < 0) estados.push(d.estado); });
+    var resumenBarra = [];
+    estados.forEach(function (e) {
+      var n = cuenta(function (d) { return d.estado === e; });
+      var seg = el('span', 'seg c-' + claveEstado(e));
+      seg.style.flexGrow = String(n);
+      seg.title = e + ': ' + n;
+      barra.appendChild(seg);
+      var li = el('li');
+      li.appendChild(el('span', 'marca c-' + claveEstado(e)));
+      li.appendChild(document.createTextNode(e));
+      li.appendChild(el('span', 'dato', String(n)));
+      ley.appendChild(li);
+      resumenBarra.push(e + ' ' + n);
+    });
+    barra.setAttribute('aria-label', 'Estado de los documentos: ' + resumenBarra.join(', '));
+  }
+
+  // ---------- Novedades
+  function pintarNovedades() {
+    var hoy = hoyISO(), desde = restarDias(hoy, 28);
+    $('novedades-periodo').textContent = desde + ' → ' + hoy;
+
+    var altas = $('nov-altas');
+    var recientes = DOCS.filter(function (d) { return d.fecha_alta && d.fecha_alta >= desde && d.fecha_alta <= hoy; });
+    var porRutina = recientes.filter(function (d) { return d.origen === 'rutina semanal'; })
+      .sort(function (a, b) { return a.fecha_alta < b.fecha_alta ? 1 : -1; });
+    var iniciales = recientes.filter(function (d) { return d.origen !== 'rutina semanal'; });
+    porRutina.forEach(function (d) {
+      var fila = el('div', 'alta');
+      fila.appendChild(el('span', 'dato', d.fecha_alta));
+      var t = el('div', 'alta-titulo');
+      t.appendChild(botonDoc(d));
+      fila.appendChild(t);
+      var sub = el('span', 'alta-sub', (ETIQ_TIPO[d.tipo] || d.tipo) + ' · ' + d.organismo + ' · desde la rutina semanal');
+      fila.appendChild(sub);
+      altas.appendChild(fila);
+    });
+    if (iniciales.length) {
+      var porFecha = {};
+      iniciales.forEach(function (d) { (porFecha[d.fecha_alta] = porFecha[d.fecha_alta] || []).push(d); });
+      Object.keys(porFecha).sort().reverse().forEach(function (f) {
+        var lista = porFecha[f];
+        var fila = el('div', 'alta');
+        fila.appendChild(el('span', 'dato', f));
+        fila.appendChild(el('div', 'alta-titulo', 'Alta inicial: ' + plural(lista.length, ['documento', 'documentos'])));
+        var det = el('details', 'alta-sub');
+        det.appendChild(el('summary', null, 'Ver la lista'));
+        var ul = el('ul', 'lista-plegada');
+        lista.sort(function (a, b) { return a.id < b.id ? -1 : 1; }).forEach(function (d) {
+          var li = el('li');
+          li.appendChild(el('span', 'dato', d.id + ' '));
+          li.appendChild(botonDoc(d));
+          ul.appendChild(li);
+        });
+        det.appendChild(ul);
+        fila.appendChild(det);
+        altas.appendChild(fila);
+      });
+    }
+    if (!recientes.length) altas.appendChild(el('p', 'nota', 'Nada añadido en las últimas cuatro semanas.'));
+
+    var ultimo = INFORMES.length ? INFORMES[INFORMES.length - 1] : null;
+    if (ultimo && (ultimo.documentos_nuevos || []).length) {
+      var urls = {};
+      DOCS.forEach(function (d) { if (d.url) urls[d.url] = true; });
+      var sinDecidir = ultimo.documentos_nuevos.filter(function (n) { return !(n.urls || []).some(function (u) { return urls[u]; }); });
+      var p = el('p', 'nota', 'El informe del ' + ultimo.fecha + ' propuso ' + plural(ultimo.documentos_nuevos.length, ['documento', 'documentos']) +
+        (sinDecidir.length ? '; sin decidir: ' + sinDecidir.map(function (n) { return n.titulo; }).join(' · ') : '; ya están en la biblioteca.'));
+      altas.appendChild(p);
+    }
+
+    var estados = $('nov-estados');
+    var recientesInf = INFORMES.filter(function (i) { return i.fecha >= desde && i.fecha <= hoy; });
+    var cambios = [];
+    recientesInf.forEach(function (inf) {
+      (inf.cambios || []).forEach(function (c) {
+        var d = POR_ID[c.id], antes = estadoBase(c.estado);
+        if (d && antes && norm(antes) !== norm(d.estado)) cambios.push({ doc: d, antes: antes, ahora: d.estado, fecha: inf.fecha });
+      });
+    });
+    var ver = el('p', 'veredicto');
+    var icono = svg('svg', { width: '26', height: '26', viewBox: '0 0 26 26', 'aria-hidden': 'true' });
+    if (cambios.length) {
+      icono.appendChild(svg('circle', { cx: '13', cy: '13', r: '12', fill: '#8c5300' }));
+      icono.appendChild(svg('path', { d: 'M13 6v9M13 18.5v1.5', stroke: '#ffffff', 'stroke-width': '2.6', 'stroke-linecap': 'round', fill: 'none' }));
+      ver.appendChild(icono);
+      ver.appendChild(document.createTextNode(plural(cambios.length, ['cambio de estado', 'cambios de estado'])));
+    } else {
+      icono.appendChild(svg('circle', { cx: '13', cy: '13', r: '12', fill: '#1d7a3b' }));
+      icono.appendChild(svg('path', { d: 'M7.5 13.5l3.6 3.6 7.4-7.6', stroke: '#ffffff', 'stroke-width': '2.6', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' }));
+      ver.appendChild(icono);
+      ver.appendChild(document.createTextNode('Ningún cambio de estado'));
+    }
+    estados.appendChild(ver);
+    if (cambios.length) {
+      var uc = el('ul', 'revision');
+      cambios.forEach(function (c) {
+        var li = el('li');
+        li.appendChild(botonDoc(c.doc, c.doc.id, 'enlace-id'));
+        var fila = el('div', 'cambio-fila');
+        fila.appendChild(insigniaEstado(c.antes));
+        fila.appendChild(el('span', 'flecha', '→'));
+        fila.appendChild(insigniaEstado(c.ahora));
+        fila.appendChild(el('span', 'nota', 'informe del ' + c.fecha));
+        li.appendChild(fila);
+        uc.appendChild(li);
+      });
+      estados.appendChild(uc);
+    }
+    if (recientesInf.length) {
+      var inf = recientesInf[recientesInf.length - 1];
+      if ((inf.cambios || []).length) {
+        var cab = el('p', 'nota');
+        cab.appendChild(document.createTextNode('Revisado en el '));
+        if (esRutaLocal(inf.archivo)) { var a = el('a', null, 'informe del ' + inf.fecha); a.href = inf.archivo; cab.appendChild(a); }
+        else cab.appendChild(document.createTextNode('informe del ' + inf.fecha));
+        cab.appendChild(document.createTextNode(':'));
+        estados.appendChild(cab);
+        var ul = el('ul', 'revision');
+        inf.cambios.forEach(function (c) {
+          var li = el('li');
+          if (POR_ID[c.id]) li.appendChild(botonDoc(POR_ID[c.id], c.id, 'enlace-id dato'));
+          else li.appendChild(el('span', 'dato', c.id));
+          var r = el('span', 'resultado');
+          r.appendChild(texto(c.resultado));
+          li.appendChild(r);
+          ul.appendChild(li);
+        });
+        estados.appendChild(ul);
+      }
+    } else {
+      estados.appendChild(el('p', 'nota', 'No hay informes semanales en las últimas cuatro semanas.'));
+    }
+  }
+
+  // ---------- Facetas (filtros combinables con recuentos)
+  var FACETAS = [
+    { clave: 'tipo', titulo: 'Tipo', de: function (d) { return [d.tipo]; }, etiqueta: function (v) { return ETIQ_TIPO[v] || v; },
+      marca: function (v) { return 'c-' + v; }, orden: function (vals) { return ['norma', 'guia', 'caso'].filter(function (v) { return vals.indexOf(v) >= 0; }); } },
+    { clave: 'estado', titulo: 'Estado', de: function (d) { return [d.estado]; }, marca: function (v) { return 'c-' + claveEstado(v); },
+      orden: function (vals) { return ORDEN_ESTADO.filter(function (v) { return vals.indexOf(v) >= 0; }).concat(vals.filter(function (v) { return ORDEN_ESTADO.indexOf(v) < 0; })); } },
+    { clave: 'vinculante', titulo: '¿Obliga? (vinculante)', de: function (d) { return [d.vinculante]; }, etiqueta: etiquetaObliga,
+      orden: function (vals) { return ['sí', 'parcial', 'no'].filter(function (v) { return vals.indexOf(v) >= 0; }).concat(vals.filter(function (v) { return ['sí', 'parcial', 'no'].indexOf(v) < 0; })); } },
+    { clave: 'ambito', titulo: 'Ámbito', de: function (d) { return [d.ambito]; } },
+    { clave: 'tema', titulo: 'Tema', de: function (d) { return d.temas; } }
+  ];
+  var SEL = {};
+  var CHIPS = [];
+  FACETAS.forEach(function (f) { SEL[f.clave] = []; });
+
+  function palabras() { return norm($('q').value).split(/\s+/).filter(Boolean); }
+  function pasa(d, excepto, pals) {
+    for (var i = 0; i < pals.length; i++) if (d._busqueda.indexOf(pals[i]) < 0) return false;
+    for (var j = 0; j < FACETAS.length; j++) {
+      var f = FACETAS[j];
+      if (f.clave === excepto || !SEL[f.clave].length) continue;
+      var vals = f.de(d);
+      if (!vals.some(function (v) { return SEL[f.clave].indexOf(v) >= 0; })) return false;
+    }
+    return true;
+  }
+  function prepararFacetas() {
+    var cont = $('facetas');
+    FACETAS.forEach(function (f) {
+      var vistos = [];
+      DOCS.forEach(function (d) { f.de(d).forEach(function (v) { if (v && vistos.indexOf(v) < 0) vistos.push(v); }); });
+      var vals = f.orden ? f.orden(vistos) : vistos.sort(function (a, b) { return norm(a) < norm(b) ? -1 : 1; });
+      var fs = el('fieldset', 'faceta');
+      fs.appendChild(el('legend', 'etq', f.titulo));
+      var chips = el('div', 'chips');
+      vals.forEach(function (v) {
+        var b = el('button', 'chip');
+        b.type = 'button';
+        b.setAttribute('aria-pressed', 'false');
+        if (f.marca) b.appendChild(el('span', 'marca ' + f.marca(v)));
+        b.appendChild(document.createTextNode(f.etiqueta ? f.etiqueta(v) : v));
+        var n = el('span', 'n', '0');
+        b.appendChild(n);
+        b.addEventListener('click', function () {
+          var s = SEL[f.clave], k = s.indexOf(v);
+          if (k >= 0) s.splice(k, 1); else s.push(v);
+          pintar();
+        });
+        chips.appendChild(b);
+        CHIPS.push({ faceta: f, valor: v, boton: b, n: n });
+      });
+      fs.appendChild(chips);
+      cont.appendChild(fs);
+    });
+  }
+  function actualizarFacetas(pals) {
+    CHIPS.forEach(function (c) {
+      var n = DOCS.filter(function (d) { return pasa(d, c.faceta.clave, pals) && c.faceta.de(d).indexOf(c.valor) >= 0; }).length;
+      var activo = SEL[c.faceta.clave].indexOf(c.valor) >= 0;
+      c.n.textContent = String(n);
+      c.boton.setAttribute('aria-pressed', activo ? 'true' : 'false');
+      c.boton.classList.toggle('vacia', !n && !activo);
+    });
+  }
+  function pintarActivos() {
+    var cont = $('activos');
+    cont.textContent = '';
+    var hay = false;
+    FACETAS.forEach(function (f) {
+      SEL[f.clave].forEach(function (v) {
+        hay = true;
+        var b = el('button', 'activo');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Quitar el filtro ' + f.titulo + ': ' + (f.etiqueta ? f.etiqueta(v) : v));
+        b.appendChild(document.createTextNode((f.etiqueta ? f.etiqueta(v) : v)));
+        b.appendChild(el('span', null, '×')).setAttribute('aria-hidden', 'true');
+        b.addEventListener('click', function () { SEL[f.clave].splice(SEL[f.clave].indexOf(v), 1); pintar(); });
+        cont.appendChild(b);
+      });
+    });
+    if ($('q').value.trim()) {
+      hay = true;
+      var bq = el('button', 'activo');
+      bq.type = 'button';
+      bq.appendChild(document.createTextNode('«' + $('q').value.trim() + '»'));
+      bq.appendChild(el('span', null, '×')).setAttribute('aria-hidden', 'true');
+      bq.addEventListener('click', function () { $('q').value = ''; pintar(); });
+      cont.appendChild(bq);
+    }
+    if (hay) {
+      var q = el('button', 'quitar', 'Quitar todo');
+      q.type = 'button';
+      q.addEventListener('click', limpiar);
+      cont.appendChild(q);
+    }
+    cont.hidden = !hay;
+  }
+  function limpiar() {
+    $('q').value = '';
+    FACETAS.forEach(function (f) { SEL[f.clave] = []; });
+    $('orden').value = 'fecha-desc';
+    pintar();
+  }
+
+  // ---------- Orden y tarjetas
+  function ordenar(a, b) {
+    var o = $('orden').value;
+    if (o === 'titulo') return norm(a.corto || a.titulo) < norm(b.corto || b.titulo) ? -1 : 1;
+    if (o === 'id') return a.id < b.id ? -1 : 1;
+    var ka = claveFecha(a.fecha), kb = claveFecha(b.fecha);
+    if (!ka && !kb) return a.id < b.id ? -1 : 1;
+    if (!ka) return 1;
+    if (!kb) return -1;
+    if (ka === kb) return a.id < b.id ? -1 : 1;
+    return o === 'fecha-asc' ? (ka < kb ? -1 : 1) : (ka > kb ? -1 : 1);
+  }
+  function datosDoc(d) {
+    var fila = el('div', 't-datos');
+    fila.appendChild(el('span', 'fecha' + (claveFecha(d.fecha) ? '' : ' sin'), d.fecha || 'PENDIENTE'));
+    fila.appendChild(insigniaEstado(d.estado));
+    fila.appendChild(el('span', 'obliga' + (norm(d.vinculante) === 'no' ? ' o-no' : ''), etiquetaObliga(d.vinculante)));
+    return fila;
+  }
+  function cabeceraDoc(d) {
+    var cab = el('div', 't-cab');
+    cab.appendChild(etiquetaTipo(d.tipo));
+    cab.appendChild(el('span', 'ref dato', d.id + ' · ' + d.ambito + (d.pais ? ' (' + d.pais + ')' : '')));
+    return cab;
+  }
+  function tarjeta(d) {
+    var art = el('article', 'tarjeta');
+    art.appendChild(cabeceraDoc(d));
+    art.appendChild(el('h3', 't-titulo', d.corto || d.titulo));
+    art.appendChild(el('p', 't-org', d.organismo));
+    art.appendChild(datosDoc(d));
+    var r = el('p', 't-resumen', d.resumen);
+    r.title = d.resumen;
+    art.appendChild(r);
+    var pie = el('div', 't-pie');
+    pie.appendChild(botonDoc(d, 'Ver ficha', 'ver-ficha'));
+    if (esUrl(d.url)) pie.appendChild(enlaceExterno(d.url, 'Fuente oficial ↗')).className = 'fuente';
+    art.appendChild(pie);
+    return art;
+  }
+
+  // ---------- Línea de tiempo
+  function entradasDe(lista) {
+    var out = [];
+    lista.forEach(function (d) {
+      (d.fechas_clave || []).forEach(function (f) {
+        var k = claveFecha(f.fecha);
+        if (k) out.push({ fecha: f.fecha, clave: k, texto: f.texto, doc: d });
+      });
+    });
+    return out.sort(function (a, b) { return a.clave < b.clave ? -1 : a.clave > b.clave ? 1 : (a.doc.id < b.doc.id ? -1 : 1); });
+  }
+  function pintarMapa(entradas, hoy) {
+    var cont = $('mapa');
+    cont.textContent = '';
+    cont.hidden = !entradas.length;
+    if (!entradas.length) return;
+    var W = 1000, H = 132, M = 30, BASE = 96;
+    var anios = entradas.map(function (e) { return +e.clave.slice(0, 4); }).concat([+hoy.slice(0, 4)]);
+    var a0 = Math.min.apply(null, anios), a1 = Math.max.apply(null, anios) + 1;
+    function x(clave) {
+      var p = clave.split('-'), a = +p[0], m = +p[1] || 1, d = +p[2] || 1;
+      return M + ((a + (m - 1) / 12 + (d - 1) / 366) - a0) / (a1 - a0) * (W - 2 * M);
+    }
+    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
+      'aria-label': entradas.length + ' fechas clave entre ' + entradas[0].fecha + ' y ' + entradas[entradas.length - 1].fecha + '. La lista de abajo las detalla.' });
+    for (var a = a0; a <= a1; a++) {
+      var xa = M + (a - a0) / (a1 - a0) * (W - 2 * M);
+      s.appendChild(svg('line', { x1: xa, x2: xa, y1: 18, y2: BASE + 6, class: 'm-tick' }));
+      if (a < a1) {
+        var t = svg('text', { x: xa + (W - 2 * M) / (a1 - a0) / 2, y: BASE + 26, 'text-anchor': 'middle', class: 'm-anio', 'data-anio': a }, String(a));
+        s.appendChild(t);
+      }
+    }
+    s.appendChild(svg('line', { x1: M, x2: W - M, y1: BASE, y2: BASE, class: 'm-eje' }));
+    var pilas = {};
+    entradas.forEach(function (e) {
+      var cx = x(e.clave), cubo = Math.round(cx / 11);
+      var nivel = pilas[cubo] = (pilas[cubo] || 0) + 1;
+      var c = svg('circle', { cx: cx.toFixed(1), cy: (BASE - 9 - (nivel - 1) * 12).toFixed(1), r: 5, class: 'm-' + e.doc.tipo });
+      c.appendChild(svg('title', {}, e.fecha + ' · ' + e.doc.id + ' · ' + e.texto));
+      s.appendChild(c);
+    });
+    var xh = x(hoy);
+    s.appendChild(svg('line', { x1: xh, x2: xh, y1: 16, y2: BASE + 6, class: 'm-hoy' }));
+    s.appendChild(svg('text', { x: xh, y: 12, 'text-anchor': xh > W - 60 ? 'end' : 'middle', class: 'm-hoy-txt' }, 'Hoy'));
+    s.addEventListener('click', function (ev) {
+      var an = ev.target.getAttribute && ev.target.getAttribute('data-anio');
+      if (an && $('anio-' + an)) $('anio-' + an).scrollIntoView({ block: 'start' });
+    });
+    cont.appendChild(s);
+  }
+  function pintarLinea(lista) {
+    var entradas = entradasDe(lista), hoy = hoyISO();
+    $('linea-nota').textContent = plural(entradas.length, ['fecha clave', 'fechas clave']) + ' de ' + plural(lista.length, ['documento', 'documentos']) +
+      ' (los que se ven con la búsqueda y los filtros). Las fechas sin día solo dan el mes o el año.';
+    pintarMapa(entradas, hoy);
+    var cont = $('linea');
+    cont.textContent = '';
+    if (!entradas.length) { cont.appendChild(el('li', 'nota', 'No hay fechas clave para los documentos que se ven.')); return; }
+    var items = entradas.slice();
+    items.push({ hoy: true, clave: hoy, fecha: hoy });
+    items.sort(function (a, b) { return a.clave < b.clave ? -1 : a.clave > b.clave ? 1 : (a.hoy ? 1 : b.hoy ? -1 : 0); });
+    var anioActual = null, ol = null;
+    items.forEach(function (e) {
+      var an = e.clave.slice(0, 4);
+      if (an !== anioActual) {
+        anioActual = an;
+        var grupo = el('li', 'anio-grupo');
+        var h = el('h3', 'anio', an);
+        h.id = 'anio-' + an;
+        grupo.appendChild(h);
+        ol = el('ol', 'hitos');
+        grupo.appendChild(ol);
+        cont.appendChild(grupo);
+      }
+      if (e.hoy) { ol.appendChild(el('li', 'hoy-fila', 'Hoy · ' + hoy)); return; }
+      var futuro = e.clave > hoy;
+      var li = el('li', 'hito h-' + e.doc.tipo + (futuro ? ' futuro' : ''));
+      var f = el('span', 'hito-fecha', e.fecha);
+      if (futuro) f.appendChild(el('span', 'proximo', 'próximo'));
+      li.appendChild(f);
+      var cuerpo = el('div');
+      var p = el('p');
+      p.appendChild(texto(e.texto.charAt(0).toUpperCase() + e.texto.slice(1)));
+      cuerpo.appendChild(p);
+      cuerpo.appendChild(botonDoc(e.doc, (ETIQ_TIPO[e.doc.tipo] || e.doc.tipo) + ' · ' + e.doc.id + ' · ' + (e.doc.corto || e.doc.titulo)));
+      li.appendChild(cuerpo);
+      ol.appendChild(li);
+    });
+  }
+
+  // ---------- Pintado general
+  var visibles = [];
+  function pintar() {
+    var pals = palabras();
+    visibles = DOCS.filter(function (d) { return pasa(d, null, pals); }).sort(ordenar);
+    var cont = $('tarjetas');
+    cont.textContent = '';
+    visibles.forEach(function (d) { cont.appendChild(tarjeta(d)); });
+    $('vacio').hidden = visibles.length > 0;
+    $('n-visibles').textContent = String(visibles.length);
+    $('n-total').textContent = visibles.length === DOCS.length ? (visibles.length === 1 ? 'documento' : 'documentos') : 'de ' + DOCS.length + ' documentos';
+    actualizarFacetas(pals);
+    pintarActivos();
+    pintarLinea(visibles);
+  }
+
+  // ---------- Visor de ficha
+  var dlg = $('ficha');
+  function abrirFicha(id) {
+    var d = POR_ID[id];
+    if (!d) return;
+    var f = d.ficha || {};
+    var cab = $('ficha-cab'); cab.textContent = '';
+    cab.appendChild(etiquetaTipo(d.tipo));
+    cab.appendChild(el('span', 'ref dato', d.id + ' · ' + d.ambito + (d.pais ? ' (' + d.pais + ')' : '')));
+    $('ficha-titulo').textContent = f.titulo || d.corto || d.titulo;
+    var of = $('ficha-oficial');
+    of.textContent = d.titulo && d.titulo !== f.titulo ? d.titulo : '';
+    of.hidden = !of.textContent;
+    var datos = $('ficha-datos'); datos.textContent = '';
+    datos.appendChild(datosDoc(d));
+
+    var dl = $('ficha-meta'); dl.textContent = '';
+    (f.campos || []).forEach(function (par) {
+      var k = par[0], v = par[1];
+      if (k === 'Tipo') return;
+      var wrap = el('div');
+      wrap.appendChild(el('dt', null, k));
+      var dd = el('dd');
+      if (k === 'URL oficial' && esUrl(v)) dd.appendChild(enlaceExterno(v));
+      else if (k === 'Archivo' && esRutaLocal(v)) { var a = el('a', null, v); a.href = v; dd.appendChild(a); }
+      else if (k === 'ID') dd.textContent = v;
+      else dd.appendChild(texto(v));
+      wrap.appendChild(dd);
+      dl.appendChild(wrap);
+    });
+
+    var tx = $('ficha-texto'); tx.textContent = '';
+    (f.secciones || []).forEach(function (s) {
+      tx.appendChild(el('h3', null, s.titulo));
+      (s.parrafos || []).forEach(function (t) { var p = el('p'); p.appendChild(texto(t)); tx.appendChild(p); });
+      if ((s.items || []).length) {
+        var ul = el('ul');
+        s.items.forEach(function (t) { var li = el('li'); li.appendChild(texto(t)); ul.appendChild(li); });
+        tx.appendChild(ul);
+      }
+    });
+
+    var pie = $('ficha-pie'); pie.textContent = '';
+    if (esRutaLocal(d.archivo)) { var a1 = el('a', null, 'Abrir el documento'); a1.href = d.archivo; pie.appendChild(a1); }
+    if (esRutaLocal(d.ficha_archivo)) { var a2 = el('a', null, 'Abrir la ficha (.md)'); a2.href = d.ficha_archivo; pie.appendChild(a2); }
+    if (esUrl(d.url)) pie.appendChild(enlaceExterno(d.url, 'Fuente oficial ↗'));
+
+    if (!dlg.open) dlg.showModal();
+    dlg.scrollTop = 0;
+  }
+  $('cerrar-ficha').addEventListener('click', function () { dlg.close(); });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-id]') : null;
+    if (t) { e.preventDefault(); abrirFicha(t.getAttribute('data-id')); }
+  });
+
+  // ---------- Exportar CSV (lo que se ve)
+  function celdaCSV(v) {
+    v = Array.isArray(v) ? v.join('; ') : String(v == null ? '' : v);
+    if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
+    return '"' + v.replace(/"/g, '""') + '"';
+  }
+  $('exportar').addEventListener('click', function () {
+    var filas = visibles.map(function (d) {
+      return COLUMNAS_CSV.map(function (k) { return celdaCSV(d.xlsx && k in d.xlsx ? d.xlsx[k] : d[k]); }).join(';');
+    });
+    var csv = '﻿' + COLUMNAS_CSV.join(';') + '\r\n' + filas.join('\r\n') + '\r\n';
+    var url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'biblioteca_filtrada_' + hoyISO() + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  });
+
+  // ---------- Controles
+  $('q').addEventListener('input', pintar);
+  $('orden').addEventListener('change', pintar);
+  document.addEventListener('keydown', function (e) {
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (e.key === '/' && !dlg.open && tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') { e.preventDefault(); $('q').focus(); }
+  });
+  var tamano = 18;
+  function cambiarTamano(delta) {
+    tamano = Math.max(14, Math.min(28, tamano + delta));
+    document.documentElement.style.fontSize = tamano + 'px';
+  }
+  $('texto-menos').addEventListener('click', function () { cambiarTamano(-2); });
+  $('texto-mas').addEventListener('click', function () { cambiarTamano(2); });
+
+  pintarPortada();
+  pintarNovedades();
+  prepararFacetas();
+  pintar();
+})();
+</script>
+</body>
+</html>

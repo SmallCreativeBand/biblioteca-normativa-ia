@@ -1,0 +1,9 @@
+# Sistema
+.DS_Store
+~$*
+
+# Versiones antiguas de la página (se guardan solo en local)
+papelera/
+
+# Descargas sin clasificar: se suben cuando pasan a normas/, guias/ o casos/
+descargas/
